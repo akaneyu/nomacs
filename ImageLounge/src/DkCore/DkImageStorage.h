@@ -130,8 +130,8 @@ public:
     static QImage exposure(const QImage &src, double exposure, double offset, double gamma);
     static QImage bgColor(const QImage &src, const QColor &col);
     static QByteArray extractImageFromDataStream(const QByteArray &ba,
-                                                 const QByteArray &beginSignature = "‰PNG",
-                                                 const QByteArray &endSignature = "END®B`‚",
+                                                 const QByteArray &beginSignature = "\xe2\x80\xb0PNG",
+                                                 const QByteArray &endSignature = "END\xc2\xae\x42\x60\xe2\x80\x9a",
                                                  bool debugOutput = false);
     static QByteArray fixSamsungPanorama(QByteArray &ba);
     static int intFromByteArray(const QByteArray &ba, int pos);
