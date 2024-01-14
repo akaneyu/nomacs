@@ -117,6 +117,8 @@ bool DkImageContainer::operator>=(const DkImageContainer &o) const
 
 void DkImageContainer::clear()
 {
+    scaledImages.clear(); // invalid now
+
     if (mLoader)
         mLoader->release();
     if (mFileBuffer)
@@ -126,16 +128,22 @@ void DkImageContainer::clear()
 
 void DkImageContainer::undo()
 {
+    scaledImages.clear(); // invalid now
+
     getLoader()->undo();
 }
 
 void DkImageContainer::redo()
 {
+    scaledImages.clear(); // invalid now
+
     getLoader()->redo();
 }
 
 void DkImageContainer::setHistoryIndex(int idx)
 {
+    scaledImages.clear(); // invalid now
+
     getLoader()->setHistoryIndex(idx);
 }
 
@@ -349,6 +357,8 @@ QImage DkImageContainer::imageScaledToWidth(int width)
 
 void DkImageContainer::setImage(const QImage &img, const QString &editName)
 {
+    scaledImages.clear(); // invalid now
+
     getLoader()->setEditImage(img, editName);
     mEdited = true;
 }
