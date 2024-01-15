@@ -191,7 +191,12 @@ void DkManipulatorWidget::selectManipulator()
     // compute preview
     if (mpl && mImgC) {
         DkTimer dt;
-        QImage img = mpl->apply(mImgC->imageScaledToWidth(qMin(mPreview->width(), mMaxPreview)));
+        // use the reference image for ext manipulation
+        auto l = mImgC->getLoader();
+        QImage refImg = l->isReferenceImageValid() ? l->referenceImage() : l->image();
+        QImage img = mpl->apply(refImg.scaledToWidth(qMin(mPreview->width(), mMaxPreview),
+                Qt::SmoothTransformation));
+        //QImage img = mpl->apply(mImgC->imageScaledToWidth(qMin(mPreview->width(), mMaxPreview)));
         img = scaledPreview(img);
 
         if (!img.isNull())

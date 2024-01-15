@@ -858,16 +858,19 @@ void DkViewPort::applyManipulator()
         am.action(DkActionManager::menu_edit_image)->setChecked(true);
     }
 
-    // undo last if it is an extended manipulator
     QImage img;
-    if (mplExt && imageContainer()) {
+    if (imageContainer()) {
         auto l = imageContainer()->getLoader();
         l->setMinHistorySize(3); // increase the min history size to 3 for correctly popping back
-        if (!l->history()->isEmpty() && l->lastEdit().editName() == mplExt->name()) {
-            imageContainer()->undo();
+
+        // use the last image as a reference if the previous ext manipulation is done
+        if (l->isReferenceImageValid()
+                && (!mplExt || l->lastEdit().editName() != mplExt->name())) {
+
+            l->invalidateReferenceImage();
         }
 
-        img = imageContainer()->image();
+        img = l->isReferenceImageValid() ? l->referenceImage() : l->image();
     } else
         img = getImage();
 
@@ -893,9 +896,17 @@ void DkViewPort::manipulatorApplied()
     // set the edited image
     QImage img = mManipulatorWatcher.result();
 
-    if (!img.isNull())
+    if (!img.isNull()) {
         setEditedImage(img, mActiveManipulator->name());
-    else
+
+        // no need for a reference image if normal manipulation has been applied
+        if (!mplExt) {
+            if (imageContainer()) {
+                auto l = imageContainer()->getLoader();
+                l->invalidateReferenceImage();
+            }
+        }
+    } else
         mController->setInfo(mActiveManipulator->errorMessage());
 
     if (mplExt && mplExt->isDirty()) {

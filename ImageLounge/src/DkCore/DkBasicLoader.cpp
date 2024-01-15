@@ -770,13 +770,18 @@ void DkBasicLoader::setEditImage(const QImage &img, const QString &editName)
     if (img.isNull())
         return;
 
+    // do not append if the previous image is still used as a reference
+    bool needReplace = isReferenceImageValid();
+
     // delete all hidden edit states
     pruneEditHistory();
 
     // compute new history size
     int historySize = 0;
-    for (const DkEditImage &e : mImages) {
-        historySize += e.size();
+    if (!needReplace) {
+        for (const DkEditImage &e : mImages) {
+            historySize += e.size();
+        }
     }
 
     // reset exif orientation after image edit
@@ -785,13 +790,20 @@ void DkBasicLoader::setEditImage(const QImage &img, const QString &editName)
     // new history item with new pixmap (and old or original metadata)
     DkEditImage newImg(img, mMetaData->copy(), editName); // new image, old/unchanged metadata
 
-    if (historySize + newImg.size() > DkSettingsManager::param().resources().historyMemory && mImages.size() > mMinHistorySize) {
-        mImages.removeAt(1);
-        qWarning() << "removing history image because it's too large:" << historySize + newImg.size() << "MB";
-    }
+    if (needReplace) {
+        mImages[mImageIndex] = newImg;
+    } else {
+        if (historySize + newImg.size() > DkSettingsManager::param().resources().historyMemory && mImages.size() > mMinHistorySize) {
+            mImages.removeAt(1);
+            qWarning() << "removing history image because it's too large:" << historySize + newImg.size() << "MB";
+        }
 
-    mImages.append(newImg);
-    mImageIndex = mImages.size() - 1; // set the index again to the last
+        // the previous image is now used as a reference
+        mReferenceImageIndex = mImageIndex;
+
+        mImages.append(newImg);
+        mImageIndex = mImages.size() - 1; // set the index again to the last
+    }
 }
 
 void DkBasicLoader::setEditMetaData(const QSharedPointer<DkMetaDataT> &metaData, const QImage &img, const QString &editName)
@@ -856,6 +868,18 @@ QImage DkBasicLoader::pixmap() const
     // Return current pixmap, which may contain modification from metadata changes like rotation
     // This should not be used to write the image to disk, use image() instead.
     return mImages.at(mImageIndex).image();
+}
+
+QImage DkBasicLoader::referenceImage() const
+{
+    if (mReferenceImageIndex < 0 || mReferenceImageIndex >= mImages.size()) {
+        if (mImages.isEmpty())
+            return QImage();
+        else
+            return mImages.last().image();
+    }
+
+    return mImages.at(mReferenceImageIndex).image();
 }
 
 /**
@@ -927,6 +951,8 @@ void DkBasicLoader::undo()
     // for example, see DkMetaDataWidgets/DkMetaDataHUD - or DkCommentWidget
     mMetaData->update(metaData);
 
+    invalidateReferenceImage();
+
     // Notify listeners about changed metadata
     emit undoSignal();
     emit resetMetaDataSignal();
@@ -944,6 +970,8 @@ void DkBasicLoader::redo()
     // Update our current metadata object, which is also used elsewhere (pointer)
     // for example, see DkMetaDataWidgets/DkMetaDataHUD - or DkCommentWidget
     mMetaData->update(metaData);
+
+    invalidateReferenceImage();
 
     // Notify listeners about changed metadata
     emit redoSignal();
@@ -975,6 +1003,18 @@ void DkBasicLoader::setHistoryIndex(int idx)
 {
     mImageIndex = idx;
     // TODO update mMetaData, see undo()
+
+    invalidateReferenceImage();
+}
+
+bool DkBasicLoader::isReferenceImageValid() const
+{
+    return mReferenceImageIndex != -1;
+}
+
+void DkBasicLoader::invalidateReferenceImage()
+{
+    mReferenceImageIndex = -1;
 }
 
 void DkBasicLoader::loadFileToBuffer(const QString &filePath, QByteArray &ba) const
@@ -1460,6 +1500,7 @@ void DkBasicLoader::release()
 
     mImages.clear(); // clear history
     mImageIndex = -1;
+    mReferenceImageIndex = -1;
 
     // Unload metadata
     mMetaData = QSharedPointer<DkMetaDataT>(new DkMetaDataT());

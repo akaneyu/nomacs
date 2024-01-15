@@ -301,6 +301,7 @@ public:
     QImage image() const;
     QImage lastImage() const;
     QImage pixmap() const;
+    QImage referenceImage() const;
 
     QSharedPointer<DkMetaDataT> lastMetaDataEdit(bool return_nullptr = true, bool return_orig = false) const;
 
@@ -343,6 +344,9 @@ public:
     void setMinHistorySize(int size);
     void setHistoryIndex(int idx);
     int historyIndex() const;
+
+    bool isReferenceImageValid() const;
+    void invalidateReferenceImage();
 
     void loadFileToBuffer(const QString &filePath, QByteArray &ba) const;
     QSharedPointer<QByteArray> loadFileToBuffer(const QString &filePath) const;
@@ -418,6 +422,7 @@ protected:
     QVector<DkEditImage> mImages;
     int mMinHistorySize = 2;
     int mImageIndex = 0;
+    int mReferenceImageIndex = 0;
 };
 
 namespace tga
