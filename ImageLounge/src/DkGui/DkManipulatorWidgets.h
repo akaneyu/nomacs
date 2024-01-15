@@ -62,6 +62,8 @@ public:
 
     QSharedPointer<DkBaseManipulatorExt> baseManipulator() const;
 
+    virtual void applyDefault() = 0;
+
 private:
     QSharedPointer<DkBaseManipulatorExt> mBaseManipulator;
 };
@@ -74,6 +76,8 @@ public:
     DkTinyPlanetWidget(QSharedPointer<DkBaseManipulatorExt> manipulator, QWidget *parent = 0);
 
     QSharedPointer<DkTinyPlanetManipulator> manipulator() const;
+
+    void applyDefault() override;
 
 public slots:
     void on_scaleSlider_valueChanged(int val);
@@ -93,6 +97,8 @@ public:
 
     QSharedPointer<DkBlurManipulator> manipulator() const;
 
+    void applyDefault() override;
+
 public slots:
     void on_sigmaSlider_valueChanged(int val);
 
@@ -108,6 +114,8 @@ public:
     DkUnsharpMaskWidget(QSharedPointer<DkBaseManipulatorExt> manipulator, QWidget *parent = 0);
 
     QSharedPointer<DkUnsharpMaskManipulator> manipulator() const;
+
+    void applyDefault() override;
 
 public slots:
     void on_sigmaSlider_valueChanged(int val);
@@ -126,6 +134,8 @@ public:
 
     QSharedPointer<DkRotateManipulator> manipulator() const;
 
+    void applyDefault() override;
+
 public slots:
     void on_angleSlider_valueChanged(int val);
 
@@ -141,6 +151,8 @@ public:
     DkResizeWidget(QSharedPointer<DkBaseManipulatorExt> manipulator, QWidget *parent = 0);
 
     QSharedPointer<DkResizeManipulator> manipulator() const;
+
+    void applyDefault() override;
 
 public slots:
     void on_scaleFactorSlider_valueChanged(double val);
@@ -163,6 +175,8 @@ public:
 
     QSharedPointer<DkThresholdManipulator> manipulator() const;
 
+    void applyDefault() override;
+
 public slots:
     void on_thrSlider_valueChanged(int val);
     void on_colBox_toggled(bool checked);
@@ -179,6 +193,8 @@ public:
     DkHueWidget(QSharedPointer<DkBaseManipulatorExt> manipulator, QWidget *parent = 0);
 
     QSharedPointer<DkHueManipulator> manipulator() const;
+
+    void applyDefault() override;
 
 public slots:
     void on_hueSlider_valueChanged(int val);
@@ -198,6 +214,8 @@ public:
 
     QSharedPointer<DkColorManipulator> manipulator() const;
 
+    void applyDefault() override;
+
 public slots:
     void on_colPicker_colorSelected(const QColor &col);
 
@@ -213,6 +231,8 @@ public:
     DkExposureWidget(QSharedPointer<DkBaseManipulatorExt> manipulator, QWidget *parent = 0);
 
     QSharedPointer<DkExposureManipulator> manipulator() const;
+
+    void applyDefault() override;
 
 public slots:
     void on_exposureSlider_valueChanged(double val);

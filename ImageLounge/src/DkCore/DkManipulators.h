@@ -101,6 +101,8 @@ public:
     void setDirty(bool dirty);
     bool isDirty() const;
 
+    virtual void applyDefault() = 0;
+
 private:
     bool mDirty = false;
     QWidget *mWidget = 0;

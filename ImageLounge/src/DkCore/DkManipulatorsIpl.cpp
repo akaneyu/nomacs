@@ -175,6 +175,13 @@ QString DkTinyPlanetManipulator::errorMessage() const
     return QObject::tr("Sorry, I could not create a tiny planet");
 }
 
+void DkTinyPlanetManipulator::applyDefault()
+{
+    mAngle = mAngleDefault;
+    mSize = mSizeDefault;
+    mInverted = mInvertedDefault;
+}
+
 void DkTinyPlanetManipulator::setAngle(int angle)
 {
     if (angle == mAngle)
@@ -236,6 +243,11 @@ QString DkBlurManipulator::errorMessage() const
     return QObject::tr("Cannot blur image");
 }
 
+void DkBlurManipulator::applyDefault()
+{
+    mSigma = mSigmaDefault;
+}
+
 void DkBlurManipulator::setSigma(int sigma)
 {
     if (mSigma == sigma)
@@ -266,6 +278,12 @@ QImage DkUnsharpMaskManipulator::apply(const QImage &img) const
 QString DkUnsharpMaskManipulator::errorMessage() const
 {
     return QObject::tr("Cannot sharpen image");
+}
+
+void DkUnsharpMaskManipulator::applyDefault()
+{
+    mSigma = mSigmaDefault;
+    mAmount = mAmountDefault;
 }
 
 void DkUnsharpMaskManipulator::setSigma(int sigma)
@@ -312,6 +330,11 @@ QString DkRotateManipulator::errorMessage() const
     return QObject::tr("Cannot rotate image");
 }
 
+void DkRotateManipulator::applyDefault()
+{
+    mAngle = mAngleDefault;
+}
+
 void DkRotateManipulator::setAngle(int angle)
 {
     if (angle == mAngle)
@@ -343,6 +366,13 @@ QImage DkResizeManipulator::apply(const QImage &img) const
 QString DkResizeManipulator::errorMessage() const
 {
     return QObject::tr("Cannot resize image");
+}
+
+void DkResizeManipulator::applyDefault()
+{
+    mScaleFactor = mScaleFactorDefault;
+    mInterpolation = mInterpolationDefault;
+    mCorrectGamma = mCorrectGammaDefault;
 }
 
 void DkResizeManipulator::setScaleFactor(double sf)
@@ -394,6 +424,12 @@ QString DkThresholdManipulator::errorMessage() const
     return QObject::tr("Cannot threshold image");
 }
 
+void DkThresholdManipulator::applyDefault()
+{
+    mThreshold = mThresholdDefault;
+    mColor = mColorDefault;
+}
+
 void DkThresholdManipulator::setThreshold(int thr)
 {
     if (thr == mThreshold)
@@ -436,6 +472,13 @@ QImage DkHueManipulator::apply(const QImage &img) const
 QString DkHueManipulator::errorMessage() const
 {
     return QObject::tr("Cannot change Hue/Saturation");
+}
+
+void DkHueManipulator::applyDefault()
+{
+    mHue = mHueDefault;
+    mSat = mSatDefault;
+    mValue = mValueDefault;
 }
 
 void DkHueManipulator::setHue(int hue)
@@ -495,6 +538,13 @@ QString DkExposureManipulator::errorMessage() const
     return QObject::tr("Cannot apply exposure");
 }
 
+void DkExposureManipulator::applyDefault()
+{
+    mExposure = mExposureDefault;
+    mOffset = mOffsetDefault;
+    mGamma = mGammaDefault;
+}
+
 void DkExposureManipulator::setExposure(double exposure)
 {
     if (mExposure == exposure)
@@ -551,6 +601,11 @@ QImage DkColorManipulator::apply(const QImage &img) const
 QString DkColorManipulator::errorMessage() const
 {
     return QObject::tr("Cannot draw background color");
+}
+
+void DkColorManipulator::applyDefault()
+{
+    mColor = mColorDefault;
 }
 
 void DkColorManipulator::setColor(const QColor &col)

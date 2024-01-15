@@ -28,6 +28,7 @@
 
 #include "DkManipulatorWidgets.h"
 #include "DkActionManager.h"
+#include "DkBasicLoader.h"
 #include "DkBasicWidgets.h"
 #include "DkImageStorage.h"
 #include "DkManipulatorsIpl.h"
@@ -188,6 +189,11 @@ void DkManipulatorWidget::selectManipulator()
     QSharedPointer<DkBaseManipulator> mpl = am.manipulatorManager().manipulator(action);
     QSharedPointer<DkBaseManipulatorExt> mplExt = qSharedPointerDynamicCast<DkBaseManipulatorExt>(mpl);
 
+    // apply default when this widget is appeared
+    if (mplExt && !mplExt->widget()->isVisible()) {
+        ((DkBaseManipulatorWidget *) mplExt->widget())->applyDefault();
+    }
+
     // compute preview
     if (mpl && mImgC) {
         DkTimer dt;
@@ -307,6 +313,26 @@ QSharedPointer<DkTinyPlanetManipulator> DkTinyPlanetWidget::manipulator() const
     return qSharedPointerDynamicCast<DkTinyPlanetManipulator>(baseManipulator());
 }
 
+void DkTinyPlanetWidget::applyDefault()
+{
+    manipulator()->applyDefault();
+
+    DkSlider *scaleSlider = findChild<DkSlider *>("scaleSlider");
+    scaleSlider->blockSignals(true);
+    scaleSlider->setValue(manipulator()->size());
+    scaleSlider->blockSignals(false);
+
+    DkSlider *angleSlider = findChild<DkSlider *>("angleSlider");
+    angleSlider->blockSignals(true);
+    angleSlider->setValue(manipulator()->angle());
+    angleSlider->blockSignals(false);
+
+    QCheckBox *invertBox = findChild<QCheckBox *>("invertBox");
+    invertBox->blockSignals(true);
+    invertBox->setChecked(manipulator()->inverted());
+    invertBox->blockSignals(false);
+}
+
 // DkBlurWidget --------------------------------------------------------------------
 DkBlurWidget::DkBlurWidget(QSharedPointer<DkBaseManipulatorExt> manipulator, QWidget *parent)
     : DkBaseManipulatorWidget(manipulator, parent)
@@ -337,6 +363,16 @@ void DkBlurWidget::on_sigmaSlider_valueChanged(int val)
 QSharedPointer<DkBlurManipulator> DkBlurWidget::manipulator() const
 {
     return qSharedPointerDynamicCast<DkBlurManipulator>(baseManipulator());
+}
+
+void DkBlurWidget::applyDefault()
+{
+    manipulator()->applyDefault();
+
+    DkSlider *sigmaSlider = findChild<DkSlider *>("sigmaSlider");
+    sigmaSlider->blockSignals(true);
+    sigmaSlider->setValue(manipulator()->sigma());
+    sigmaSlider->blockSignals(false);
 }
 
 // DkUnsharpMaskWidget --------------------------------------------------------------------
@@ -381,6 +417,21 @@ QSharedPointer<DkUnsharpMaskManipulator> DkUnsharpMaskWidget::manipulator() cons
     return qSharedPointerDynamicCast<DkUnsharpMaskManipulator>(baseManipulator());
 }
 
+void DkUnsharpMaskWidget::applyDefault()
+{
+    manipulator()->applyDefault();
+
+    DkSlider *sigmaSlider = findChild<DkSlider *>("sigmaSlider");
+    sigmaSlider->blockSignals(true);
+    sigmaSlider->setValue(manipulator()->sigma());
+    sigmaSlider->blockSignals(false);
+
+    DkSlider *amountSlider = findChild<DkSlider *>("amountSlider");
+    amountSlider->blockSignals(true);
+    amountSlider->setValue(manipulator()->amount());
+    amountSlider->blockSignals(false);
+}
+
 // DkRotateWidget --------------------------------------------------------------------
 DkRotateWidget::DkRotateWidget(QSharedPointer<DkBaseManipulatorExt> manipulator, QWidget *parent)
     : DkBaseManipulatorWidget(manipulator, parent)
@@ -394,6 +445,16 @@ DkRotateWidget::DkRotateWidget(QSharedPointer<DkBaseManipulatorExt> manipulator,
 QSharedPointer<DkRotateManipulator> DkRotateWidget::manipulator() const
 {
     return qSharedPointerDynamicCast<DkRotateManipulator>(baseManipulator());
+}
+
+void DkRotateWidget::applyDefault()
+{
+    manipulator()->applyDefault();
+
+    DkSlider *angleSlider = findChild<DkSlider *>("angleSlider");
+    angleSlider->blockSignals(true);
+    angleSlider->setValue(manipulator()->angle());
+    angleSlider->blockSignals(false);
 }
 
 void DkRotateWidget::createLayout()
@@ -413,7 +474,7 @@ void DkRotateWidget::on_angleSlider_valueChanged(int val)
     manipulator()->setAngle(val);
 }
 
-// DkRotateWidget --------------------------------------------------------------------
+// DkResizeWidget --------------------------------------------------------------------
 DkResizeWidget::DkResizeWidget(QSharedPointer<DkBaseManipulatorExt> manipulator, QWidget *parent)
     : DkBaseManipulatorWidget(manipulator, parent)
 {
@@ -429,6 +490,25 @@ DkResizeWidget::DkResizeWidget(QSharedPointer<DkBaseManipulatorExt> manipulator,
 QSharedPointer<DkResizeManipulator> DkResizeWidget::manipulator() const
 {
     return qSharedPointerDynamicCast<DkResizeManipulator>(baseManipulator());
+}
+
+void DkResizeWidget::applyDefault()
+{
+    manipulator()->applyDefault();
+
+    DkDoubleSlider *scaleSlider = findChild<DkDoubleSlider *>("scaleFactorSlider");
+    scaleSlider->blockSignals(true);
+    scaleSlider->setValue(manipulator()->scaleFactor());
+    scaleSlider->blockSignals(false);
+
+    mIplBox->blockSignals(true);
+    mIplBox->setCurrentIndex(1);
+    mIplBox->blockSignals(false);
+
+    QCheckBox *cbGamma = findChild<QCheckBox *>("gammaCorrection");
+    cbGamma->blockSignals(true);
+    cbGamma->setChecked(false);
+    cbGamma->blockSignals(false);
 }
 
 void DkResizeWidget::onObjectNameChanged(const QString &name)
@@ -500,6 +580,21 @@ QSharedPointer<DkThresholdManipulator> DkThresholdWidget::manipulator() const
     return qSharedPointerDynamicCast<DkThresholdManipulator>(baseManipulator());
 }
 
+void DkThresholdWidget::applyDefault()
+{
+    manipulator()->applyDefault();
+
+    DkSlider *thrSlider = findChild<DkSlider *>("thrSlider");
+    thrSlider->blockSignals(true);
+    thrSlider->setValue(manipulator()->threshold());
+    thrSlider->blockSignals(false);
+
+    QCheckBox *colBox = findChild<QCheckBox *>("colBox");
+    colBox->blockSignals(true);
+    colBox->setChecked(manipulator()->color());
+    colBox->blockSignals(false);
+}
+
 void DkThresholdWidget::on_colBox_toggled(bool checked)
 {
     manipulator()->setColor(checked);
@@ -544,6 +639,16 @@ QSharedPointer<DkColorManipulator> DkColorWidget::manipulator() const
     return qSharedPointerDynamicCast<DkColorManipulator>(baseManipulator());
 }
 
+void DkColorWidget::applyDefault()
+{
+    manipulator()->applyDefault();
+
+    DkColorPicker *colPicker = findChild<DkColorPicker *>("colPicker");
+    colPicker->blockSignals(true);
+    colPicker->setColor(QColor(0, 0, 0));
+    colPicker->blockSignals(false);
+}
+
 void DkColorWidget::createLayout()
 {
     DkColorPicker *cp = new DkColorPicker(this);
@@ -572,6 +677,26 @@ DkHueWidget::DkHueWidget(QSharedPointer<DkBaseManipulatorExt> manipulator, QWidg
 QSharedPointer<DkHueManipulator> DkHueWidget::manipulator() const
 {
     return qSharedPointerDynamicCast<DkHueManipulator>(baseManipulator());
+}
+
+void DkHueWidget::applyDefault()
+{
+    manipulator()->applyDefault();
+
+    DkSlider *hueSlider = findChild<DkSlider *>("hueSlider");
+    hueSlider->blockSignals(true);
+    hueSlider->setValue(manipulator()->hue());
+    hueSlider->blockSignals(false);
+
+    DkSlider *satSlider = findChild<DkSlider *>("satSlider");
+    satSlider->blockSignals(true);
+    satSlider->setValue(manipulator()->saturation());
+    satSlider->blockSignals(false);
+
+    DkSlider *brightnessSlider = findChild<DkSlider *>("brightnessSlider");
+    brightnessSlider->blockSignals(true);
+    brightnessSlider->setValue(manipulator()->value());
+    brightnessSlider->blockSignals(false);
 }
 
 void DkHueWidget::createLayout()
@@ -631,6 +756,26 @@ DkExposureWidget::DkExposureWidget(QSharedPointer<DkBaseManipulatorExt> manipula
 QSharedPointer<DkExposureManipulator> DkExposureWidget::manipulator() const
 {
     return qSharedPointerDynamicCast<DkExposureManipulator>(baseManipulator());
+}
+
+void DkExposureWidget::applyDefault()
+{
+    manipulator()->applyDefault();
+
+    DkDoubleSlider *exposureSlider = findChild<DkDoubleSlider *>("exposureSlider");
+    exposureSlider->blockSignals(true);
+    exposureSlider->setValue(manipulator()->exposure());
+    exposureSlider->blockSignals(false);
+
+    DkDoubleSlider *offsetSlider = findChild<DkDoubleSlider *>("offsetSlider");
+    offsetSlider->blockSignals(true);
+    offsetSlider->setValue(manipulator()->offset());
+    offsetSlider->blockSignals(false);
+
+    DkDoubleSlider *gammaSlider = findChild<DkDoubleSlider *>("gammaSlider");
+    gammaSlider->blockSignals(true);
+    gammaSlider->setValue(manipulator()->gamma());
+    gammaSlider->blockSignals(false);
 }
 
 void DkExposureWidget::createLayout()

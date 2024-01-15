@@ -116,6 +116,8 @@ public:
     QImage apply(const QImage &img) const override;
     QString errorMessage() const override;
 
+    void applyDefault() override;
+
     void setSize(int size);
     int size() const;
 
@@ -126,9 +128,13 @@ public:
     bool inverted() const;
 
 private:
-    int mSize = 30;
-    int mAngle = 0;
-    bool mInverted = false;
+    int mSizeDefault = 30;
+    int mAngleDefault = 0;
+    bool mInvertedDefault = false;
+
+    int mSize = mSizeDefault;
+    int mAngle = mAngleDefault;
+    bool mInverted = mInvertedDefault;
 };
 
 class DllCoreExport DkColorManipulator : public DkBaseManipulatorExt
@@ -139,11 +145,15 @@ public:
     QImage apply(const QImage &img) const override;
     QString errorMessage() const override;
 
+    void applyDefault() override;
+
     void setColor(const QColor &col);
     QColor color() const;
 
 private:
-    QColor mColor = Qt::white;
+    QColor mColorDefault = Qt::white;
+
+    QColor mColor = mColorDefault;
 };
 
 class DllCoreExport DkBlurManipulator : public DkBaseManipulatorExt
@@ -154,11 +164,15 @@ public:
     QImage apply(const QImage &img) const override;
     QString errorMessage() const override;
 
+    void applyDefault() override;
+
     void setSigma(int sigma);
     int sigma() const;
 
 private:
-    int mSigma = 5;
+    int mSigmaDefault = 5;
+
+    int mSigma = mSigmaDefault;
 };
 
 class DllCoreExport DkUnsharpMaskManipulator : public DkBaseManipulatorExt
@@ -169,6 +183,8 @@ public:
     QImage apply(const QImage &img) const override;
     QString errorMessage() const override;
 
+    void applyDefault() override;
+
     void setSigma(int sigma);
     int sigma() const;
 
@@ -176,8 +192,11 @@ public:
     int amount() const;
 
 private:
-    int mSigma = 30;
-    int mAmount = 15;
+    int mSigmaDefault = 30;
+    int mAmountDefault = 15;
+
+    int mSigma = mSigmaDefault;
+    int mAmount = mAmountDefault;
 };
 
 class DllCoreExport DkRotateManipulator : public DkBaseManipulatorExt
@@ -188,11 +207,15 @@ public:
     QImage apply(const QImage &img) const override;
     QString errorMessage() const override;
 
+    void applyDefault() override;
+
     void setAngle(int angle);
     int angle() const;
 
 private:
-    int mAngle = 0;
+    int mAngleDefault = 0;
+
+    int mAngle = mAngleDefault;
 };
 
 class DllCoreExport DkResizeManipulator : public DkBaseManipulatorExt
@@ -202,6 +225,8 @@ public:
 
     QImage apply(const QImage &img) const override;
     QString errorMessage() const override;
+
+    void applyDefault() override;
 
     void setScaleFactor(double sf);
     double scaleFactor() const;
@@ -213,9 +238,13 @@ public:
     bool correctGamma() const;
 
 private:
-    double mScaleFactor = 1.0;
-    int mInterpolation = 1;
-    bool mCorrectGamma = false;
+    double mScaleFactorDefault = 1.0;
+    int mInterpolationDefault = 1;
+    bool mCorrectGammaDefault = false;
+
+    double mScaleFactor = mScaleFactorDefault;
+    int mInterpolation = mInterpolationDefault;
+    bool mCorrectGamma = mCorrectGammaDefault;
 };
 
 class DllCoreExport DkThresholdManipulator : public DkBaseManipulatorExt
@@ -226,6 +255,8 @@ public:
     QImage apply(const QImage &img) const override;
     QString errorMessage() const override;
 
+    void applyDefault() override;
+
     void setThreshold(int thr);
     int threshold() const;
 
@@ -233,8 +264,11 @@ public:
     bool color() const;
 
 private:
-    int mThreshold = 128;
-    bool mColor = false;
+    int mThresholdDefault = 128;
+    bool mColorDefault = false;
+
+    int mThreshold = mThresholdDefault;
+    bool mColor = mColorDefault;
 };
 
 class DllCoreExport DkHueManipulator : public DkBaseManipulatorExt
@@ -244,6 +278,8 @@ public:
 
     QImage apply(const QImage &img) const override;
     QString errorMessage() const override;
+
+    void applyDefault() override;
 
     void setHue(int hue);
     int hue() const;
@@ -255,9 +291,13 @@ public:
     int value() const;
 
 private:
-    int mHue = 0;
-    int mSat = 0;
-    int mValue = 0;
+    int mHueDefault = 0;
+    int mSatDefault = 0;
+    int mValueDefault = 0;
+
+    int mHue = mHueDefault;
+    int mSat = mSatDefault;
+    int mValue = mValueDefault;
 };
 
 class DllCoreExport DkExposureManipulator : public DkBaseManipulatorExt
@@ -267,6 +307,8 @@ public:
 
     QImage apply(const QImage &img) const override;
     QString errorMessage() const override;
+
+    void applyDefault() override;
 
     void setExposure(double exposure);
     double exposure() const;
@@ -278,8 +320,12 @@ public:
     double gamma() const;
 
 private:
-    double mExposure = 0.0;
-    double mOffset = 0.0;
-    double mGamma = 1.0;
+    double mExposureDefault = 0.0;
+    double mOffsetDefault = 0.0;
+    double mGammaDefault = 1.0;
+
+    double mExposure = mExposureDefault;
+    double mOffset = mOffsetDefault;
+    double mGamma = mGammaDefault;
 };
 }
