@@ -593,7 +593,7 @@ void DkHueWidget::createLayout()
     DkSlider *brightnessSlider = new DkSlider(tr("Brightness"), this);
     brightnessSlider->setObjectName("brightnessSlider");
     brightnessSlider->getSlider()->setObjectName("DkBrightnessSlider");
-    brightnessSlider->setValue(manipulator()->hue());
+    brightnessSlider->setValue(manipulator()->value());
     brightnessSlider->setMinimum(-100);
     brightnessSlider->setMaximum(100);
 
