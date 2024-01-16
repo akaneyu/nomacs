@@ -1,14 +1,124 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Generator: Adobe Illustrator 21.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 160 160" style="enable-background:new 0 0 160 160;" xml:space="preserve">
-<style type="text/css">
+
+<svg
+   version="1.1"
+   id="Layer_1"
+   x="0px"
+   y="0px"
+   viewBox="0 0 160 160"
+   style="enable-background:new 0 0 160 160;"
+   xml:space="preserve"
+   sodipodi:docname="rotate-cw.svg"
+   inkscape:version="1.3.2 (091e20e, 2023-11-25, custom)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><defs
+   id="defs1" /><sodipodi:namedview
+   id="namedview1"
+   pagecolor="#ffffff"
+   bordercolor="#000000"
+   borderopacity="0.25"
+   inkscape:showpageshadow="2"
+   inkscape:pageopacity="0.0"
+   inkscape:pagecheckerboard="0"
+   inkscape:deskcolor="#d1d1d1"
+   showgrid="true"
+   inkscape:zoom="5.1972348"
+   inkscape:cx="61.186383"
+   inkscape:cy="73.404418"
+   inkscape:window-width="2180"
+   inkscape:window-height="1351"
+   inkscape:window-x="830"
+   inkscape:window-y="14"
+   inkscape:window-maximized="0"
+   inkscape:current-layer="Layer_1"><inkscape:grid
+     id="grid1"
+     units="px"
+     originx="0"
+     originy="0"
+     spacingx="1"
+     spacingy="1"
+     empcolor="#0099e5"
+     empopacity="0.30196078"
+     color="#0099e5"
+     opacity="0.14902"
+     empspacing="5"
+     dotted="false"
+     gridanglex="30"
+     gridanglez="30"
+     visible="true" /></sodipodi:namedview>
+<style
+   type="text/css"
+   id="style1">
 	.st0{fill:none;stroke:#231F20;stroke-width:14;stroke-linecap:round;stroke-miterlimit:10;}
 	.st1{fill:#231F20;}
 </style>
-<g>
-	<path class="st0" d="M137.2,40.3c-2.9-4.2-6.3-8.1-10-11.6C114.7,17.1,98,10,79.6,10c-38.7,0-70,31.3-70,70s31.3,70,70,70
-		c19.6,0,37.4-8.1,50.1-21.1"/>
-	<polygon class="st1" points="110.8,42.7 141.6,11.9 160,61.1 	"/>
-</g>
-</svg>
+
+<line
+   class="st1"
+   x1="10"
+   y1="130"
+   x2="20"
+   y2="130"
+   id="line2"
+   style="fill:none;stroke:#231f20;stroke-width:10;stroke-linecap:round;stroke-miterlimit:10" /><line
+   class="st1"
+   x1="10"
+   y1="110"
+   x2="20"
+   y2="110"
+   id="line3"
+   style="fill:none;stroke:#231f20;stroke-width:10;stroke-linecap:round;stroke-miterlimit:10" /><line
+   class="st1"
+   x1="10"
+   y1="90"
+   x2="20"
+   y2="90"
+   id="line4"
+   style="fill:none;stroke:#231f20;stroke-width:10;stroke-linecap:round;stroke-miterlimit:10" /><line
+   class="st1"
+   x1="10"
+   y1="70"
+   x2="20"
+   y2="70"
+   id="line5"
+   style="fill:none;stroke:#231f20;stroke-width:10;stroke-linecap:round;stroke-miterlimit:10" /><line
+   class="st1"
+   x1="10"
+   y1="50"
+   x2="20"
+   y2="50"
+   id="line6"
+   style="fill:none;stroke:#231f20;stroke-width:10;stroke-linecap:round;stroke-miterlimit:10" /><line
+   class="st1"
+   x1="10"
+   y1="30"
+   x2="20"
+   y2="30"
+   id="line7"
+   style="fill:none;stroke:#231f20;stroke-width:10;stroke-linecap:round;stroke-miterlimit:10" /><line
+   class="st1"
+   x1="10"
+   y1="10"
+   x2="20"
+   y2="10"
+   id="line8"
+   style="fill:none;stroke:#231f20;stroke-width:10;stroke-linecap:round;stroke-miterlimit:10" /><line
+   class="st1"
+   x1="10"
+   y1="150"
+   x2="150.00029"
+   y2="150"
+   id="line1"
+   style="fill:none;stroke:#231f20;stroke-width:10;stroke-linecap:round;stroke-miterlimit:10" /><path
+   class="st0"
+   d="m 42,27 c 50.310004,0 91,40.690002 91,91"
+   id="path1"
+   style="fill:none;stroke:#231f20;stroke-width:14;stroke-linecap:round;stroke-miterlimit:10"
+   sodipodi:nodetypes="cc" /><path
+   style="fill:#000000;stroke-width:6.69115;-inkscape-stroke:none"
+   d="m 105,100 h 55 l -27.5,35 z"
+   id="path2"
+   sodipodi:nodetypes="cccc" /></svg>
