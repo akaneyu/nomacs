@@ -33,7 +33,7 @@
 #include "DkManipulatorsIpl.h"
 
 #pragma warning(push, 0) // no warnings from includes
-
+#include <QButtonGroup>
 #pragma warning(pop)
 
 #ifndef DllExport
@@ -262,6 +262,7 @@ private:
     QImage scaledPreview(const QImage &img) const;
 
     QVector<DkBaseManipulatorWidget *> mWidgets;
+    QButtonGroup *mTabGroup = 0;
 
     QSharedPointer<DkImageContainerT> mImgC;
     QLabel *mPreview = 0;

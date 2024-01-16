@@ -38,7 +38,6 @@
 #include "DkWidgets.h"
 
 #pragma warning(push, 0) // no warnings from includes
-#include <QButtonGroup>
 #include <QCheckBox>
 #include <QComboBox>
 #include <QLabel>
@@ -82,7 +81,7 @@ void DkManipulatorWidget::createLayout()
     aLayout->setContentsMargins(0, 0, 0, 0);
     aLayout->setSpacing(0);
 
-    QButtonGroup *group = new QButtonGroup(this);
+    mTabGroup = new QButtonGroup(this);
 
     DkActionManager &am = DkActionManager::instance();
     // for (QAction* a : am.manipulatorActions()) {	// if you want to get all
@@ -93,7 +92,7 @@ void DkManipulatorWidget::createLayout()
         connect(entry, SIGNAL(clicked()), mpl->action(), SIGNAL(triggered()), Qt::UniqueConnection);
 
         aLayout->addWidget(entry);
-        group->addButton(entry);
+        mTabGroup->addButton(entry);
     }
 
     QString scrollbarStyle = QString("QScrollBar:vertical {border: 1px solid " + DkUtils::colorToString(DkSettingsManager::param().display().hudFgdColor)
@@ -214,6 +213,13 @@ void DkManipulatorWidget::selectManipulator()
         w->hide();
 
     if (!mplExt) {
+        // reset tab state
+        mTabGroup->setExclusive(false);
+        if (mTabGroup->checkedButton()) {
+            mTabGroup->checkedButton()->setChecked(false);
+        }
+        mTabGroup->setExclusive(true);
+
         mTitleLabel->hide();
         return;
     }
@@ -231,6 +237,13 @@ void DkManipulatorWidget::hideExtWidgets() {
     for (QWidget *w : mWidgets) {
         w->hide();
     }
+
+    // reset tab state
+    mTabGroup->setExclusive(false);
+    if (mTabGroup->checkedButton()) {
+        mTabGroup->checkedButton()->setChecked(false);
+    }
+    mTabGroup->setExclusive(true);
 
     mTitleLabel->hide();
 }
