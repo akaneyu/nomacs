@@ -968,6 +968,8 @@ void DkNoMacs::showEditDock(bool show, bool saveSettings)
         addDockWidget(mEditDock->getDockLocationSettings(Qt::RightDockWidgetArea), mEditDock);
 
         connect(getTabWidget(), SIGNAL(imageUpdatedSignal(QSharedPointer<DkImageContainerT>)), mEditDock, SLOT(setImage(QSharedPointer<DkImageContainerT>)));
+        connect(getTabWidget(), SIGNAL(imageLoadedSignal(QSharedPointer<DkImageContainerT>)), mEditDock, SLOT(imageLoaded(QSharedPointer<DkImageContainerT>)));
+        connect(getTabWidget(), SIGNAL(imageHistoryChangedSignal()), mEditDock, SLOT(imageHistoryChanged()));
     }
 
     mEditDock->setVisible(show, saveSettings);

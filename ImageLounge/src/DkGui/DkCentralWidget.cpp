@@ -472,6 +472,8 @@ void DkCentralWidget::updateLoader(QSharedPointer<DkImageLoader> loader) const
                    SIGNAL(imageLoadedSignal(QSharedPointer<DkImageContainerT>)),
                    this,
                    SIGNAL(imageLoadedSignal(QSharedPointer<DkImageContainerT>)));
+        disconnect(loader.data(), SIGNAL(imageHistoryChangedSignal()),
+                   this, SIGNAL(imageHistoryChangedSignal()));
         disconnect(loader.data(), SIGNAL(imageHasGPSSignal(bool)), this, SIGNAL(imageHasGPSSignal(bool)));
         disconnect(loader.data(), SIGNAL(updateSpinnerSignalDelayed(bool, int)), this, SLOT(showProgress(bool, int)));
         disconnect(loader.data(), SIGNAL(loadImageToTab(const QString &)), this, SLOT(loadFileToTab(const QString &)));
@@ -496,6 +498,9 @@ void DkCentralWidget::updateLoader(QSharedPointer<DkImageLoader> loader) const
             SIGNAL(imageLoadedSignal(QSharedPointer<DkImageContainerT>)),
             this,
             SIGNAL(imageLoadedSignal(QSharedPointer<DkImageContainerT>)),
+            Qt::UniqueConnection);
+    connect(loader.data(), SIGNAL(imageHistoryChangedSignal()),
+            this, SIGNAL(imageHistoryChangedSignal()),
             Qt::UniqueConnection);
     connect(loader.data(), SIGNAL(imageHasGPSSignal(bool)), this, SIGNAL(imageHasGPSSignal(bool)), Qt::UniqueConnection);
     connect(loader.data(), SIGNAL(updateSpinnerSignalDelayed(bool, int)), this, SLOT(showProgress(bool, int)), Qt::UniqueConnection);

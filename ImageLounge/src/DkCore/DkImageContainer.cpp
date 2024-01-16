@@ -942,6 +942,7 @@ void DkImageContainerT::receiveUpdates(QObject *obj, bool connectSignals /* = tr
         connect(this, SIGNAL(showInfoSignal(const QString &, int, int)), obj, SIGNAL(showInfoSignal(const QString &, int, int)), Qt::UniqueConnection);
         connect(this, SIGNAL(fileSavedSignal(const QString &, bool, bool)), obj, SLOT(imageSaved(const QString &, bool, bool)), Qt::UniqueConnection);
         connect(this, SIGNAL(imageUpdatedSignal()), obj, SLOT(currentImageUpdated()), Qt::UniqueConnection);
+        connect(this, SIGNAL(imageHistoryChangedSignal()), obj, SIGNAL(imageHistoryChangedSignal()), Qt::UniqueConnection);
         mFileUpdateTimer.start();
     } else if (!connectSignals) {
         disconnect(this, SIGNAL(errorDialogSignal(const QString &)), obj, SLOT(errorDialog(const QString &)));
@@ -949,6 +950,7 @@ void DkImageContainerT::receiveUpdates(QObject *obj, bool connectSignals /* = tr
         disconnect(this, SIGNAL(showInfoSignal(const QString &, int, int)), obj, SIGNAL(showInfoSignal(const QString &, int, int)));
         disconnect(this, SIGNAL(fileSavedSignal(const QString &, bool, bool)), obj, SLOT(imageSaved(const QString &, bool, bool)));
         disconnect(this, SIGNAL(imageUpdatedSignal()), obj, SLOT(currentImageUpdated()));
+        disconnect(this, SIGNAL(imageHistoryChangedSignal()), obj, SIGNAL(imageHistoryChangedSignal()));
         mFileUpdateTimer.stop();
     }
 
@@ -1090,18 +1092,21 @@ void DkImageContainerT::undo()
 {
     DkImageContainer::undo();
     emit imageUpdatedSignal();
+    emit imageHistoryChangedSignal();
 }
 
 void DkImageContainerT::redo()
 {
     DkImageContainer::redo();
     emit imageUpdatedSignal();
+    emit imageHistoryChangedSignal();
 }
 
 void DkImageContainerT::setHistoryIndex(int idx)
 {
     DkImageContainer::setHistoryIndex(idx);
     emit imageUpdatedSignal();
+    emit imageHistoryChangedSignal();
 }
 
 }

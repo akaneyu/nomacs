@@ -148,6 +148,7 @@ public:
 signals:
     void imageUpdatedSignal(QSharedPointer<DkImageContainerT>) const;
     void imageLoadedSignal(QSharedPointer<DkImageContainerT>) const;
+    void imageHistoryChangedSignal() const;
     void imageHasGPSSignal(bool) const;
 
 public slots:

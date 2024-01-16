@@ -197,6 +197,7 @@ signals:
     void errorDialogSignal(const QString &msg) const;
     void thumbLoadedSignal(bool loaded = true) const;
     void imageUpdatedSignal() const;
+    void imageHistoryChangedSignal() const;
 
 public slots:
     void checkForFileUpdates();

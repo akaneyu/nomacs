@@ -227,6 +227,14 @@ void DkManipulatorWidget::selectManipulator()
     mTitleLabel->setText(mpl->name());
 }
 
+void DkManipulatorWidget::hideExtWidgets() {
+    for (QWidget *w : mWidgets) {
+        w->hide();
+    }
+
+    mTitleLabel->hide();
+}
+
 // DkMainpulatorDoc --------------------------------------------------------------------
 DkEditDock::DkEditDock(const QString &title, QWidget *parent, Qt::WindowFlags flags)
     : DkDockWidget(title, parent, flags)
@@ -244,6 +252,16 @@ void DkEditDock::createLayout()
 void DkEditDock::setImage(QSharedPointer<DkImageContainerT> imgC)
 {
     mMplWidget->setImage(imgC);
+}
+
+void DkEditDock::imageLoaded(QSharedPointer<DkImageContainerT> imgC)
+{
+    mMplWidget->hideExtWidgets();
+}
+
+void DkEditDock::imageHistoryChanged()
+{
+    mMplWidget->hideExtWidgets();
 }
 
 // DkManipulatorWidget --------------------------------------------------------------------

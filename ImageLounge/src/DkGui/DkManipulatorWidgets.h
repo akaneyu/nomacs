@@ -255,6 +255,7 @@ public:
 
 public slots:
     void selectManipulator();
+    void hideExtWidgets();
 
 private:
     void createLayout();
@@ -277,6 +278,8 @@ public:
 
 public slots:
     void setImage(QSharedPointer<DkImageContainerT> imgC);
+    void imageLoaded(QSharedPointer<DkImageContainerT> imgC);
+    void imageHistoryChanged();
 
 protected:
     void createLayout();
