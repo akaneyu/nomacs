@@ -1156,7 +1156,18 @@ void DkFileFilterHandling::registerNomacs(bool showDefaultApps)
     QSettings wsettings(softwarePath, QSettings::NativeFormat);
 
     wsettings.beginGroup("RegisteredApplications");
-    wsettings.setValue("nomacs.ImageLounge." + QApplication::applicationVersion(), capPath);
+
+    // delete the old keys that contain a version number
+    for (QString key : wsettings.childKeys()) {
+        if (key.startsWith("nomacs.ImageLounge.")) {
+            wsettings.remove(key);
+        }
+    }
+
+    // Note: avoid creating multiple default apps
+    //wsettings.setValue("nomacs.ImageLounge." + QApplication::applicationVersion(), capPath);
+    wsettings.setValue("nomacs.ImageLounge", capPath);
+
     wsettings.endGroup();
 
     qDebug() << "nomacs registered ============================";
