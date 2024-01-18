@@ -374,6 +374,8 @@ void DkImageContainer::setImage(const QImage &img, const QString &editName, cons
 
 void DkImageContainer::setMetaData(QSharedPointer<DkMetaDataT> editedMetaData, const QImage &img, const QString &editName)
 {
+    scaledImages.clear(); // invalid now
+
     // Add edit history entry with explicitly edited metadata (hasMetaData()) and implicitly modified image
     // how about a signal?
 
@@ -383,6 +385,8 @@ void DkImageContainer::setMetaData(QSharedPointer<DkMetaDataT> editedMetaData, c
 
 void DkImageContainer::setMetaData(QSharedPointer<DkMetaDataT> editedMetaData, const QString &editName)
 {
+    scaledImages.clear(); // invalid now
+
     // Add edit history entry with explicitly edited metadata (hasMetaData()) and implicitly modified image
     // how about a signal?
 
@@ -392,6 +396,8 @@ void DkImageContainer::setMetaData(QSharedPointer<DkMetaDataT> editedMetaData, c
 
 void DkImageContainer::setMetaData(const QString &editName)
 {
+    scaledImages.clear(); // invalid now
+
     // Add edit history entry with explicitly edited metadata (hasMetaData()) and implicitly modified image
 
     getLoader()->setEditMetaData(editName);
