@@ -304,7 +304,7 @@ public:
     };
     struct MetaData {
         bool ignoreExifOrientation;
-        bool saveExifOrientation;
+        //bool saveExifOrientation;
     };
 
     struct Resources {

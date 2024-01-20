@@ -114,52 +114,12 @@ namespace nmc
 // DkEditImage --------------------------------------------------------------------
 
 DkEditImage::DkEditImage()
-    : mNewImg(false)
-    , mNewMetaData(false)
 {
 }
-DkEditImage::DkEditImage(const QImage &img, const QSharedPointer<DkMetaDataT> &metaData, const QString &editName)
+DkEditImage::DkEditImage(const QImage &img, const QString &editName)
     : mImg(img)
-    , mMetaData(metaData)
     , mEditName(editName)
-    , mNewImg(true)
-    , mNewMetaData(false)
 {
-    // history edit item with modified image
-}
-
-DkEditImage::DkEditImage(const QSharedPointer<DkMetaDataT> &metaData, const QImage &img, const QString &editName)
-    : mImg(img)
-    , mMetaData(metaData)
-    , mEditName(editName)
-    , mNewImg(false)
-    , mNewMetaData(true)
-{
-    // history edit item with modified metadata
-}
-
-bool DkEditImage::hasImage() const
-{
-    // Every edit item has an image, but it may be the old/original one if only metadata has been edited
-    return !mImg.isNull();
-}
-
-bool DkEditImage::hasMetaData() const
-{
-    if (mMetaData) {
-        return !mMetaData->isNull();
-    }
-    return false;
-}
-
-bool DkEditImage::hasNewImage() const
-{
-    return hasImage() && mNewImg;
-}
-
-bool DkEditImage::hasNewMetaData() const
-{
-    return hasMetaData() && mNewMetaData;
 }
 
 void DkEditImage::setImage(const QImage &img)
@@ -170,11 +130,6 @@ void DkEditImage::setImage(const QImage &img)
 QImage DkEditImage::image() const
 {
     return mImg;
-}
-
-QSharedPointer<DkMetaDataT> DkEditImage::metaData() const
-{
-    return mMetaData;
 }
 
 QString DkEditImage::editName() const
@@ -364,7 +319,7 @@ bool DkBasicLoader::loadGeneral(const QString &filePath, QSharedPointer<QByteArr
             mMetaData->setQtValues(img);
             int orientation = mMetaData->getOrientationDegree();
 
-            if (orientation != -1 && !mMetaData->isTiff() && !mMetaData->isAVIF() && !mMetaData->isHEIF() && !mMetaData->isJXL()
+            if (orientation > 0 && !mMetaData->isTiff() && !mMetaData->isAVIF() && !mMetaData->isHEIF() && !mMetaData->isJXL()
                 && !DkSettingsManager::param().metaData().ignoreExifOrientation) {
                 img = DkImage::rotateImage(img, orientation);
             }
@@ -785,10 +740,15 @@ void DkBasicLoader::setEditImage(const QImage &img, const QString &editName)
     }
 
     // reset exif orientation after image edit
-    if (!mImages.isEmpty())
-        mMetaData->clearOrientation();
-    // new history item with new pixmap (and old or original metadata)
-    DkEditImage newImg(img, mMetaData->copy(), editName); // new image, old/unchanged metadata
+    if (!mImages.isEmpty()) {
+        int orientation = mMetaData->getOrientationDegree();
+        if (orientation > 0) {
+            mMetaData->clearOrientation();
+        }
+    }
+
+    // new history item
+    DkEditImage newImg(img, editName);
 
     if (needReplace) {
         mImages[mImageIndex] = newImg;
@@ -806,47 +766,11 @@ void DkBasicLoader::setEditImage(const QImage &img, const QString &editName)
     }
 }
 
-void DkBasicLoader::setEditMetaData(const QSharedPointer<DkMetaDataT> &metaData, const QImage &img, const QString &editName)
-{
-    // delete all hidden edit states
-    pruneEditHistory();
-
-    // not removing second history item if oversized (see setEditImage())
-
-    // new history item with new metadata (and image, but hasNewImage() will be false)
-    DkEditImage newImg(metaData->copy(), img, editName); // new metadata, old/unchanged image
-
-    mImages.append(newImg);
-    mImageIndex = mImages.size() - 1; // set the index again to the last
-}
-
-void DkBasicLoader::setEditMetaData(const QSharedPointer<DkMetaDataT> &metaData, const QString &editName)
-{
-    // Add history edit with new metadata (hasMetaData()), copying last or original image
-    QImage lastImg = image(); // copy last edit of pixmap (if any) to new history item
-    setEditMetaData(metaData, lastImg, editName);
-}
-
-void DkBasicLoader::setEditMetaData(const QString &editName)
-{
-    // Add history edit with edited metadata (hasMetaData()), copying last or original image
-    setEditMetaData(mMetaData, image(), editName);
-}
-
 QImage DkBasicLoader::lastImage() const
 {
-    // Find and return the last/current version of the image (ready to be saved to disk)
-    // This is initially the first item (the original image) or the last one,
-    // excluding history items with images that only have modified metadata,
-    // for example, after rotating there'd be a history item with the rotated image
-    // but this rotated pixmap is for the gui only, it should not be saved.
-    for (int idx = mImageIndex; idx >= 0; idx--) {
-        if (mImages[idx].hasNewImage()) {
-            return mImages[idx].image();
-        }
-    }
+    // NOTE: metadata is no longer included in the history.
 
-    return QImage();
+    return image();
 }
 
 QImage DkBasicLoader::image() const
@@ -885,9 +809,6 @@ QImage DkBasicLoader::referenceImage() const
 /**
  * @brief Returns the pointer to the current metadata object which belongs to the loaded image.
  *
- * Note that this is a pointer, not a copy. After changing the metadata, it's necessary
- * to call setEditMetaData(), passing an appropriate edit name, to add a history item (will be copied).
- *
  * @return QSharedPointer<DkMetaDataT>
  */
 QSharedPointer<DkMetaDataT> DkBasicLoader::getMetaData() const
@@ -896,46 +817,14 @@ QSharedPointer<DkMetaDataT> DkBasicLoader::getMetaData() const
     return metaData;
 };
 
-QSharedPointer<DkMetaDataT> DkBasicLoader::lastMetaDataEdit(bool return_nullptr, bool return_orig) const
+bool DkBasicLoader::isImageEdited() const
 {
-    QSharedPointer<DkMetaDataT> lastEdit; // null edit
-    if (return_orig) {
-        // Return original metadata only if requested (otherwise only return modified metadata)
-        lastEdit = mImages.first().metaData();
-    } else if (!return_nullptr) {
-        // Empty null object will be returned if no history item (with edited metadata) could be found
-        lastEdit = QSharedPointer<DkMetaDataT>(new DkMetaDataT());
-    }
-
-    // Get latest modified metadata item from history (or null)
-    for (int idx = mImageIndex; idx > 0; idx--) {
-        if (mImages[idx].hasNewMetaData()) {
-            lastEdit = mImages[idx].metaData();
-            break;
-        }
-    }
-
-    return lastEdit;
+    return mImages.size() > 1;
 }
 
-bool DkBasicLoader::isImageEdited()
+bool DkBasicLoader::isMetaDataDirty() const
 {
-    for (int i = 1, ii = mImageIndex; i <= ii; i++) {
-        if (mImages[i].hasNewImage()) {
-            return true;
-        }
-    }
-    return false;
-}
-
-bool DkBasicLoader::isMetaDataEdited()
-{
-    for (int i = 1, ii = mImageIndex; i <= ii; i++) {
-        if (mImages[i].hasNewMetaData()) {
-            return true;
-        }
-    }
-    return false;
+    return mMetaData && mMetaData->isDirty();
 }
 
 void DkBasicLoader::undo()
@@ -944,18 +833,10 @@ void DkBasicLoader::undo()
     if (mImageIndex > 0)
         mImageIndex--;
 
-    // Get last history item with modified metadata (up until new history index)
-    QSharedPointer<DkMetaDataT> metaData(mMetaData);
-    metaData = lastMetaDataEdit(false, true);
-    // Update our current metadata object, which is also used elsewhere (pointer)
-    // for example, see DkMetaDataWidgets/DkMetaDataHUD - or DkCommentWidget
-    mMetaData->update(metaData);
-
     invalidateReferenceImage();
 
     // Notify listeners about changed metadata
     emit undoSignal();
-    emit resetMetaDataSignal();
 }
 
 void DkBasicLoader::redo()
@@ -964,18 +845,10 @@ void DkBasicLoader::redo()
     if (mImageIndex < mImages.size() - 1)
         mImageIndex++;
 
-    // Get last history item with modified metadata (up until new history index)
-    QSharedPointer<DkMetaDataT> metaData(mMetaData);
-    metaData = lastMetaDataEdit(false, true);
-    // Update our current metadata object, which is also used elsewhere (pointer)
-    // for example, see DkMetaDataWidgets/DkMetaDataHUD - or DkCommentWidget
-    mMetaData->update(metaData);
-
     invalidateReferenceImage();
 
     // Notify listeners about changed metadata
     emit redoSignal();
-    emit resetMetaDataSignal();
 }
 
 QVector<DkEditImage> *DkBasicLoader::history()
@@ -1002,7 +875,6 @@ void DkBasicLoader::setMinHistorySize(int size)
 void DkBasicLoader::setHistoryIndex(int idx)
 {
     mImageIndex = idx;
-    // TODO update mMetaData, see undo()
 
     invalidateReferenceImage();
 }

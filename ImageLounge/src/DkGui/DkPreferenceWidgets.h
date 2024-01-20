@@ -279,7 +279,7 @@ public slots:
     void on_filterRaw_toggled(bool checked) const;
     void on_saveDeleted_toggled(bool checked) const;
     void on_ignoreExif_toggled(bool checked) const;
-    void on_saveExif_toggled(bool checked) const;
+    //void on_saveExif_toggled(bool checked) const;
     void on_useLog_toggled(bool checked) const;
     void on_useNative_toggled(bool checked) const;
     void on_logFolder_clicked() const;

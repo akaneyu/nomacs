@@ -100,25 +100,16 @@ class DllCoreExport DkEditImage
 {
 public:
     DkEditImage();
-    DkEditImage(const QImage &img, const QSharedPointer<DkMetaDataT> &metaData, const QString &editName = "");
-    DkEditImage(const QSharedPointer<DkMetaDataT> &metaData, const QImage &img, const QString &editName = "");
+    DkEditImage(const QImage &img, const QString &editName = "");
 
     void setImage(const QImage &img);
     QString editName() const;
     QImage image() const;
-    bool hasImage() const;
-    bool hasMetaData() const;
-    bool hasNewImage() const;
-    bool hasNewMetaData() const;
-    QSharedPointer<DkMetaDataT> metaData() const;
     int size() const;
 
 protected:
     QString mEditName;
     QImage mImg;
-    bool mNewImg;
-    bool mNewMetaData;
-    QSharedPointer<DkMetaDataT> mMetaData;
 };
 
 class DllCoreExport DkRawLoader
@@ -273,9 +264,6 @@ public:
     void setImage(const QImage &img, const QString &editName, const QString &file);
     void pruneEditHistory();
     void setEditImage(const QImage &img, const QString &editName = "");
-    void setEditMetaData(const QSharedPointer<DkMetaDataT> &metaData, const QImage &img, const QString &editName = "");
-    void setEditMetaData(const QSharedPointer<DkMetaDataT> &metaData, const QString &editName = "");
-    void setEditMetaData(const QString &editName);
 
     void setTraining(bool training)
     {
@@ -303,10 +291,8 @@ public:
     QImage pixmap() const;
     QImage referenceImage() const;
 
-    QSharedPointer<DkMetaDataT> lastMetaDataEdit(bool return_nullptr = true, bool return_orig = false) const;
-
-    bool isImageEdited();
-    bool isMetaDataEdited();
+    bool isImageEdited() const;
+    bool isMetaDataDirty() const;
 
     QString getFile() const
     {
@@ -401,7 +387,6 @@ signals:
 
     void undoSignal();
     void redoSignal();
-    void resetMetaDataSignal();
 
 protected:
     bool loadRohFile(const QString &filePath, QImage &img, QSharedPointer<QByteArray> ba = QSharedPointer<QByteArray>()) const;

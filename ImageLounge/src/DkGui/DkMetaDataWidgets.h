@@ -265,7 +265,6 @@ signals:
     void showInfoSignal(const QString &msg) const;
     void commentEditedSignal() const;
     void commentSavedSignal() const;
-    void commentSavedSignal(const QString &) const;
 
 protected:
     void createLayout();

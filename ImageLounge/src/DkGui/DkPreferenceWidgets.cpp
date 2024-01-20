@@ -1393,7 +1393,7 @@ void DkAdvancedPreference::createLayout()
     cbSaveExif->setObjectName("saveExif");
     cbSaveExif->setToolTip(tr("If checked, orientation is written to the Exif rather than rotating the image Matrix\n")
                            + tr("NOTE: this allows for rotating JPGs without losing information."));
-    cbSaveExif->setChecked(DkSettingsManager::param().metaData().saveExifOrientation);
+    //cbSaveExif->setChecked(DkSettingsManager::param().metaData().saveExifOrientation);
 
     DkGroupWidget *loadFileGroup = new DkGroupWidget(tr("File Loading/Saving"), this);
     loadFileGroup->addWidget(cbSaveDeleted);
@@ -1471,11 +1471,11 @@ void DkAdvancedPreference::on_ignoreExif_toggled(bool checked) const
         DkSettingsManager::param().metaData().ignoreExifOrientation = checked;
 }
 
-void DkAdvancedPreference::on_saveExif_toggled(bool checked) const
-{
-    if (DkSettingsManager::param().metaData().saveExifOrientation != checked)
-        DkSettingsManager::param().metaData().saveExifOrientation = checked;
-}
+// void DkAdvancedPreference::on_saveExif_toggled(bool checked) const
+// {
+//     if (DkSettingsManager::param().metaData().saveExifOrientation != checked)
+//         DkSettingsManager::param().metaData().saveExifOrientation = checked;
+// }
 
 void DkAdvancedPreference::on_useLog_toggled(bool checked) const
 {

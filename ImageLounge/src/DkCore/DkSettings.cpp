@@ -454,7 +454,7 @@ void DkSettings::load(QSettings &settings, bool defaults)
     settings.beginGroup("MetaDataSettings");
 
     meta_p.ignoreExifOrientation = settings.value("ignoreExifOrientation", meta_p.ignoreExifOrientation).toBool();
-    meta_p.saveExifOrientation = settings.value("saveExifOrientation", meta_p.saveExifOrientation).toBool();
+    //meta_p.saveExifOrientation = settings.value("saveExifOrientation", meta_p.saveExifOrientation).toBool();
 
     settings.endGroup();
     // SlideShow Settings --------------------------------------------------------------------
@@ -719,8 +719,8 @@ void DkSettings::save(QSettings &settings, bool force)
 
     if (force || meta_p.ignoreExifOrientation != meta_d.ignoreExifOrientation)
         settings.setValue("ignoreExifOrientation", meta_p.ignoreExifOrientation);
-    if (force || meta_p.saveExifOrientation != meta_d.saveExifOrientation)
-        settings.setValue("saveExifOrientation", meta_p.saveExifOrientation);
+    //if (force || meta_p.saveExifOrientation != meta_d.saveExifOrientation)
+    //    settings.setValue("saveExifOrientation", meta_p.saveExifOrientation);
 
     settings.endGroup();
     // SlideShow Settings --------------------------------------------------------------------
@@ -910,7 +910,7 @@ void DkSettings::setToDefaultSettings()
     slideShow_p.backgroundColor = QColor(51, 51, 51, 255);
     slideShow_p.silentFullscreen = true;
 
-    meta_p.saveExifOrientation = true;
+    //meta_p.saveExifOrientation = true;
     meta_p.ignoreExifOrientation = false;
 
     sync_p.checkForUpdates = !isPortable(); // installed version should only check for updates by default

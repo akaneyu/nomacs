@@ -330,7 +330,7 @@ void DkControlWidget::connectWidgets()
 
 void DkControlWidget::setCommentSaved()
 {
-    mViewport->imageContainer()->setMetaData(tr("File comment"));
+    mViewport->imageContainer()->setEdited();
 }
 
 void DkControlWidget::update()
