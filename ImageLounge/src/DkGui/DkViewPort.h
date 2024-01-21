@@ -31,6 +31,7 @@
 #include "DkImageContainer.h"
 #include "DkMath.h"
 #include "DkTimer.h"
+#include "DkOrientationDialog.h"
 
 #pragma warning(push, 0) // no warnings from includes - begin
 #include <QTimer> // needed to construct mTimers
@@ -139,6 +140,7 @@ public slots:
     void rotateCCW();
     void rotate180();
     void resizeImage();
+    void setExifOrientation();
     void deleteImage();
     void zoomToFit();
     void resizeEvent(QResizeEvent *event) override;
@@ -239,6 +241,7 @@ protected:
     DkControlWidget *mController = 0;
     QSharedPointer<DkImageLoader> mLoader = QSharedPointer<DkImageLoader>();
     DkResizeDialog *mResizeDialog = 0;
+    DkOrientationDialog *mOrientationDialog = 0;
 
     QPoint mCurrentPixelPos;
 

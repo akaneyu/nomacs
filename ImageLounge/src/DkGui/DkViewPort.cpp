@@ -159,6 +159,7 @@ DkViewPort::DkViewPort(QWidget *parent)
     connect(am.action(DkActionManager::menu_edit_rotate_ccw), SIGNAL(triggered()), this, SLOT(rotateCCW()));
     connect(am.action(DkActionManager::menu_edit_rotate_180), SIGNAL(triggered()), this, SLOT(rotate180()));
     connect(am.action(DkActionManager::menu_edit_transform), SIGNAL(triggered()), this, SLOT(resizeImage()));
+    connect(am.action(DkActionManager::menu_edit_orientation), SIGNAL(triggered()), this, SLOT(setExifOrientation()));
     connect(am.action(DkActionManager::menu_edit_delete), SIGNAL(triggered()), this, SLOT(deleteImage()));
     connect(am.action(DkActionManager::menu_edit_copy), SIGNAL(triggered()), this, SLOT(copyImage()));
     connect(am.action(DkActionManager::menu_edit_copy_buffer), SIGNAL(triggered()), this, SLOT(copyImageBuffer()));
@@ -717,6 +718,54 @@ void DkViewPort::resizeImage()
         metaData->setResolution(QVector2D(mResizeDialog->getExifDpi(), mResizeDialog->getExifDpi()));
         qDebug() << "setting resolution to: " << mResizeDialog->getExifDpi();
     }
+}
+
+void DkViewPort::setExifOrientation()
+{
+    if (!mOrientationDialog)
+        mOrientationDialog = new DkOrientationDialog(this);
+
+    QSharedPointer<DkImageContainerT> imgC = imageContainer();
+
+    if (!imgC) {
+        qWarning() << "cannot set orientation for empty image...";
+        return;
+    }
+
+    if (imgC->getLoader()->isImageEdited()) {   // allow metadata edit
+        QMessageBox::warning(DkUtils::getMainWindow(), tr("Error"),
+                tr("Cannot set EXIF orientation because the image has been edited.\n"
+                "Please reload the image first."));
+        return;
+    }
+
+    QSharedPointer<DkMetaDataT> metaData = imgC->getMetaData();
+
+    int orientation = 0;
+    QString orientationStr = metaData->getNativeExifValue("Exif.Image.Orientation", false);
+    if (!orientationStr.isEmpty()) {
+        bool ok = false;
+        orientation = orientationStr.toInt(&ok);
+    }
+
+    mOrientationDialog->setImage(imgC->image(), orientation);
+
+    if (!mOrientationDialog->exec()) {
+        return;
+    }
+
+    QImage resultImg = mOrientationDialog->getProcessedImage();
+    int resultOrientation = mOrientationDialog->getOrientation();
+
+    // replace the original image (not added to the history)
+    imgC->getLoader()->history()->first().setImage(resultImg);
+
+    metaData->setExifValue("Exif.Image.Orientation", QString::number(resultOrientation));
+
+    // need to set an edit flag because we've edited the image and metadata directly
+    imgC->setEdited();
+
+    setEditedImage(imgC);
 }
 
 void DkViewPort::deleteImage()

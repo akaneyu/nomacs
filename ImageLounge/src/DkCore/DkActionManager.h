@@ -170,6 +170,7 @@ public:
         menu_edit_transform,
         menu_edit_delete,
         menu_edit_crop,
+        menu_edit_orientation,
 
         menu_edit_end, // nothing beyond this point
     };
@@ -342,6 +343,7 @@ public:
         icon_edit_rotate_ccw,
         icon_edit_crop,
         icon_edit_resize,
+        icon_edit_orientation,
         icon_edit_copy,
         icon_edit_paste,
         icon_edit_delete,

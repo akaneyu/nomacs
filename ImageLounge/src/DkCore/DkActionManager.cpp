@@ -523,6 +523,7 @@ QMenu *DkActionManager::createManipulatorMenu(QWidget *parent)
     mManipulatorMenu->addSeparator();
     mManipulatorMenu->addAction(mEditActions[menu_edit_transform]);
     mManipulatorMenu->addAction(mEditActions[menu_edit_crop]);
+    mManipulatorMenu->addAction(mEditActions[menu_edit_orientation]);
     mManipulatorMenu->addSeparator();
     mManipulatorMenu->addAction(mEditActions[menu_edit_image]);
 
@@ -678,6 +679,7 @@ QMenu *DkActionManager::createContextMenu(QWidget *parent)
     editContextMenu->addSeparator();
     editContextMenu->addAction(mEditActions[menu_edit_transform]);
     editContextMenu->addAction(mEditActions[menu_edit_crop]);
+    editContextMenu->addAction(mEditActions[menu_edit_orientation]);
     editContextMenu->addAction(mEditActions[menu_edit_delete]);
 
     mContextMenu->addMenu(mOpenWithMenu);
@@ -966,6 +968,7 @@ void DkActionManager::createIcons()
     mEditIcons[icon_edit_rotate_ccw] = DkImage::loadIcon(":/nomacs/img/rotate-cc.svg");
     mEditIcons[icon_edit_crop] = DkImage::loadIcon(":/nomacs/img/crop.svg");
     mEditIcons[icon_edit_resize] = DkImage::loadIcon(":/nomacs/img/resize.svg");
+    mEditIcons[icon_edit_orientation] = DkImage::loadIcon(":/nomacs/img/orientation.svg");
     mEditIcons[icon_edit_copy] = DkImage::loadIcon(":/nomacs/img/copy.svg");
     mEditIcons[icon_edit_paste] = DkImage::loadIcon(":/nomacs/img/paste.svg");
     mEditIcons[icon_edit_delete] = DkImage::loadIcon(":/nomacs/img/trash.svg");
@@ -1208,6 +1211,9 @@ void DkActionManager::createActions(QWidget *parent)
     mEditActions[menu_edit_crop]->setStatusTip(QObject::tr("cut the current image"));
     mEditActions[menu_edit_crop]->setCheckable(true);
     mEditActions[menu_edit_crop]->setChecked(false);
+
+    mEditActions[menu_edit_orientation] = new QAction(mEditIcons[icon_edit_orientation], QObject::tr("Set &EXIF Orientation"), parent);
+    mEditActions[menu_edit_orientation]->setStatusTip(QObject::tr("set EXIF orientation"));
 
     // panel actions
     mPanelActions.resize(menu_panel_end);
@@ -1736,6 +1742,7 @@ void DkActionManager::enableImageActions(bool enable) const
     action(DkActionManager::menu_edit_delete)->setEnabled(enable);
     action(DkActionManager::menu_edit_transform)->setEnabled(enable);
     action(DkActionManager::menu_edit_crop)->setEnabled(enable);
+    action(DkActionManager::menu_edit_orientation)->setEnabled(enable);
     action(DkActionManager::menu_edit_copy)->setEnabled(enable);
     action(DkActionManager::menu_edit_copy_buffer)->setEnabled(enable);
     action(DkActionManager::menu_edit_copy_color)->setEnabled(enable);
