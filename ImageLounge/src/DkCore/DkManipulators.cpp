@@ -32,6 +32,7 @@
 #include "DkImageContainer.h"
 #include "DkImageStorage.h"
 #include "DkSettings.h"
+#include "DkUtils.h"
 
 #pragma warning(push, 0) // no warnings from includes
 #include <QSharedPointer>
@@ -111,6 +112,21 @@ void DkManipulatorManager::createManipulators(QWidget *parent)
     action = new QAction(DkImage::loadIcon(":/nomacs/img/flip-vertical.svg", size), QObject::tr("Flip &Vertical"), parent);
     action->setStatusTip(QObject::tr("Flip Image Vertically"));
     mpls[m_flip_v] = QSharedPointer<DkFlipVManipulator>::create(action);
+
+    // rotate clockwise
+    action = new QAction(DkImage::loadIcon(":/nomacs/img/rotate-cw.svg", size), QObject::tr("Rotate 9&0%1 Clockwise").arg(dk_degree_str), parent);
+    action->setStatusTip(QObject::tr("Rotate the image 90%1 clockwise").arg(dk_degree_str));
+    mpls[m_rotate_cw] = QSharedPointer<DkRotateCWManipulator>::create(action);
+
+    // rotate counter clockwise
+    action = new QAction(DkImage::loadIcon(":/nomacs/img/rotate-cc.svg", size), QObject::tr("Rotate &90%1 Counter Clockwise").arg(dk_degree_str), parent);
+    action->setStatusTip(QObject::tr("Rotate the image 90%1 counter clockwise").arg(dk_degree_str));
+    mpls[m_rotate_ccw] = QSharedPointer<DkRotateCCWManipulator>::create(action);
+
+    // rotate 180
+    action = new QAction(DkImage::loadIcon(":/nomacs/img/rotate-180.svg", size), QObject::tr("Rotate 180%1").arg(dk_degree_str), parent);
+    action->setStatusTip(QObject::tr("Rotate the image by 180%1").arg(dk_degree_str));
+    mpls[m_rotate_180] = QSharedPointer<DkRotate180Manipulator>::create(action);
 
     // invert image
     action = new QAction(DkImage::loadIcon(":/nomacs/img/invert.svg", size), QObject::tr("&Invert Image"), parent);

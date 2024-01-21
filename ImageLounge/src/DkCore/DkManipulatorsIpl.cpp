@@ -149,6 +149,54 @@ QString DkFlipVManipulator::errorMessage() const
     return QObject::tr("Cannot flip image");
 }
 
+// DkRotateCWManipulator --------------------------------------------------------------------
+DkRotateCWManipulator::DkRotateCWManipulator(QAction *action)
+    : DkBaseManipulator(action)
+{
+}
+
+QImage DkRotateCWManipulator::apply(const QImage &img) const
+{
+    return DkImage::rotateImage(img, 90.0);
+}
+
+QString DkRotateCWManipulator::errorMessage() const
+{
+    return QObject::tr("Cannot rotate image");
+}
+
+// DkRotateCCWManipulator --------------------------------------------------------------------
+DkRotateCCWManipulator::DkRotateCCWManipulator(QAction *action)
+    : DkBaseManipulator(action)
+{
+}
+
+QImage DkRotateCCWManipulator::apply(const QImage &img) const
+{
+    return DkImage::rotateImage(img, -90.0);
+}
+
+QString DkRotateCCWManipulator::errorMessage() const
+{
+    return QObject::tr("Cannot rotate image");
+}
+
+// DkRotate180Manipulator --------------------------------------------------------------------
+DkRotate180Manipulator::DkRotate180Manipulator(QAction *action)
+    : DkBaseManipulator(action)
+{
+}
+
+QImage DkRotate180Manipulator::apply(const QImage &img) const
+{
+    return DkImage::rotateImage(img, 180.0);
+}
+
+QString DkRotate180Manipulator::errorMessage() const
+{
+    return QObject::tr("Cannot rotate image");
+}
+
 // DkTinyPlanetManipulator --------------------------------------------------------------------
 DkTinyPlanetManipulator::DkTinyPlanetManipulator(QAction *action)
     : DkBaseManipulatorExt(action)

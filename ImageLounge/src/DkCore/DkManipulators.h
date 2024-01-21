@@ -121,6 +121,9 @@ public:
         m_invert,
         m_flip_h,
         m_flip_v,
+        m_rotate_cw,
+        m_rotate_ccw,
+        m_rotate_180,
 
         m_end
     };

@@ -107,6 +107,33 @@ public:
     QString errorMessage() const override;
 };
 
+class DkRotateCWManipulator : public DkBaseManipulator
+{
+public:
+    DkRotateCWManipulator(QAction *action = 0);
+
+    QImage apply(const QImage &img) const override;
+    QString errorMessage() const override;
+};
+
+class DkRotateCCWManipulator : public DkBaseManipulator
+{
+public:
+    DkRotateCCWManipulator(QAction *action = 0);
+
+    QImage apply(const QImage &img) const override;
+    QString errorMessage() const override;
+};
+
+class DkRotate180Manipulator : public DkBaseManipulator
+{
+public:
+    DkRotate180Manipulator(QAction *action = 0);
+
+    QImage apply(const QImage &img) const override;
+    QString errorMessage() const override;
+};
+
 // Extended --------------------------------------------------------------------
 class DllCoreExport DkTinyPlanetManipulator : public DkBaseManipulatorExt
 {
