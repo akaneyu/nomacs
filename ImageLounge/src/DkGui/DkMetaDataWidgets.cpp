@@ -1259,7 +1259,6 @@ void DkCommentWidget::saveComment()
         initComment(text());
 
         emit commentSavedSignal();
-        emit commentSavedSignal(tr("File comment"));
     }
 }
 
