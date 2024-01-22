@@ -136,9 +136,6 @@ public slots:
     void fullView() override;
     void resetView() override;
 
-    void rotateCW();
-    void rotateCCW();
-    void rotate180();
     void resizeImage();
     void setExifOrientation();
     void deleteImage();

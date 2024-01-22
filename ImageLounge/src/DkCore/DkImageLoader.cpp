@@ -1475,34 +1475,6 @@ bool DkImageLoader::deleteFile()
 }
 
 /**
- * @brief rotates the image.
- *
- * First, we try to set the rotation flag in the metadata.
- * That wouldn't work if the image has no meta data, like a bmp file for example.
- * Then, the image matrix is rotated.
- *
- * @param angle the rotation angle in degree.
- **/
-void DkImageLoader::rotateImage(double angle)
-{
-    qDebug() << "rotating image...";
-
-    if (!mCurrentImage || !mCurrentImage->hasImage()) {
-        qDebug() << "sorry, loader has no image";
-        return;
-    }
-
-    QImage img = DkImage::rotateImage(mCurrentImage->pixmap(), qRound(angle));
-
-    QImage thumb = DkImage::createThumb(mCurrentImage->pixmap());
-    mCurrentImage->getThumb()->setImage(thumb);
-
-    // Note: metadata (exif orientation) is no longer changed during rotation
-    mCurrentImage->setImage(img, tr("Rotated")); // new edit with rotated pixmap
-    setImageUpdated();
-}
-
-/**
  * Restores files that were destroyed by the Exiv2 lib.
  * If a watch (or some other read lock) is on a file, the
  * Exiv2 lib is known do damage the files on Windows.

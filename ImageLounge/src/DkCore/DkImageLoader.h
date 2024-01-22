@@ -78,7 +78,6 @@ public:
                                           QStringList keywords = QStringList(),
                                           QString folderKeywords = QString());
 
-    void rotateImage(double angle);
     QSharedPointer<DkImageContainerT> getCurrentImage() const;
     QSharedPointer<DkImageContainerT> getLastImage() const;
     QString filePath() const;

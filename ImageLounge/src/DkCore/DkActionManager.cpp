@@ -500,10 +500,6 @@ QMenu *DkActionManager::createEditMenu(QWidget *parent /* = 0 */)
     mEditMenu->addAction(mEditActions[menu_edit_paste]);
     mEditMenu->addAction(mEditActions[menu_edit_delete]);
     mEditMenu->addSeparator();
-    mEditMenu->addAction(mEditActions[menu_edit_rotate_ccw]);
-    mEditMenu->addAction(mEditActions[menu_edit_rotate_cw]);
-    mEditMenu->addAction(mEditActions[menu_edit_rotate_180]);
-    mEditMenu->addSeparator();
     mEditMenu->addAction(mEditActions[menu_edit_undo]);
     mEditMenu->addAction(mEditActions[menu_edit_redo]);
     mEditMenu->addSeparator();
@@ -672,10 +668,6 @@ QMenu *DkActionManager::createContextMenu(QWidget *parent)
     editContextMenu->addSeparator();
     editContextMenu->addAction(mEditActions[menu_edit_undo]);
     editContextMenu->addAction(mEditActions[menu_edit_redo]);
-    editContextMenu->addSeparator();
-    editContextMenu->addAction(mEditActions[menu_edit_rotate_cw]);
-    editContextMenu->addAction(mEditActions[menu_edit_rotate_ccw]);
-    editContextMenu->addAction(mEditActions[menu_edit_rotate_180]);
     editContextMenu->addSeparator();
     editContextMenu->addAction(mEditActions[menu_edit_transform]);
     editContextMenu->addAction(mEditActions[menu_edit_crop]);
@@ -1133,19 +1125,6 @@ void DkActionManager::createActions(QWidget *parent)
 
     // edit actions
     mEditActions.resize(menu_edit_end);
-
-    mEditActions[menu_edit_rotate_cw] = new QAction(mEditIcons[icon_edit_rotate_cw], QObject::tr("9&0%1 Clockwise").arg(dk_degree_str), parent);
-    mEditActions[menu_edit_rotate_cw]->setShortcutContext(Qt::WidgetWithChildrenShortcut);
-    mEditActions[menu_edit_rotate_cw]->setShortcut(QKeySequence(shortcut_rotate_cw));
-    mEditActions[menu_edit_rotate_cw]->setStatusTip(QObject::tr("rotate the image 90%1 clockwise").arg(dk_degree_str));
-
-    mEditActions[menu_edit_rotate_ccw] = new QAction(mEditIcons[icon_edit_rotate_ccw], QObject::tr("&90%1 Counter Clockwise").arg(dk_degree_str), parent);
-    mEditActions[menu_edit_rotate_ccw]->setShortcutContext(Qt::WidgetWithChildrenShortcut);
-    mEditActions[menu_edit_rotate_ccw]->setShortcut(QKeySequence(shortcut_rotate_ccw));
-    mEditActions[menu_edit_rotate_ccw]->setStatusTip(QObject::tr("rotate the image 90%1 counter clockwise").arg(dk_degree_str));
-
-    mEditActions[menu_edit_rotate_180] = new QAction(QObject::tr("180%1").arg(dk_degree_str), parent);
-    mEditActions[menu_edit_rotate_180]->setStatusTip(QObject::tr("rotate the image by 180%1").arg(dk_degree_str));
 
     mEditActions[menu_edit_undo] = new QAction(QObject::tr("&Undo"), parent);
     mEditActions[menu_edit_undo]->setShortcutContext(Qt::WidgetWithChildrenShortcut);
@@ -1736,9 +1715,6 @@ void DkActionManager::enableImageActions(bool enable) const
     action(DkActionManager::menu_file_goto)->setEnabled(enable);
     action(DkActionManager::menu_file_find)->setEnabled(enable);
 
-    action(DkActionManager::menu_edit_rotate_cw)->setEnabled(enable);
-    action(DkActionManager::menu_edit_rotate_ccw)->setEnabled(enable);
-    action(DkActionManager::menu_edit_rotate_180)->setEnabled(enable);
     action(DkActionManager::menu_edit_delete)->setEnabled(enable);
     action(DkActionManager::menu_edit_transform)->setEnabled(enable);
     action(DkActionManager::menu_edit_crop)->setEnabled(enable);

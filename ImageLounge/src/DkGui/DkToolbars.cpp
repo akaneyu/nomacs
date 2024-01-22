@@ -1199,9 +1199,6 @@ void DkToolBarManager::createDefaultToolBar()
     mToolBar->addAction(am.action(DkActionManager::menu_edit_copy));
     mToolBar->addAction(am.action(DkActionManager::menu_edit_paste));
     mToolBar->addSeparator();
-    mToolBar->addAction(am.action(DkActionManager::menu_edit_rotate_ccw));
-    mToolBar->addAction(am.action(DkActionManager::menu_edit_rotate_cw));
-    mToolBar->addSeparator();
     mToolBar->addAction(am.action(DkActionManager::menu_edit_crop));
     mToolBar->addAction(am.action(DkActionManager::menu_edit_transform));
     mToolBar->addAction(am.action(DkActionManager::menu_edit_orientation));

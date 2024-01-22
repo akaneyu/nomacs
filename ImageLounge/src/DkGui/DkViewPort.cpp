@@ -155,9 +155,6 @@ DkViewPort::DkViewPort(QWidget *parent)
     connect(am.action(DkActionManager::menu_file_save_web), SIGNAL(triggered()), this, SLOT(saveFileWeb()));
     connect(am.action(DkActionManager::menu_tools_wallpaper), SIGNAL(triggered()), this, SLOT(setAsWallpaper()));
 
-    connect(am.action(DkActionManager::menu_edit_rotate_cw), SIGNAL(triggered()), this, SLOT(rotateCW()));
-    connect(am.action(DkActionManager::menu_edit_rotate_ccw), SIGNAL(triggered()), this, SLOT(rotateCCW()));
-    connect(am.action(DkActionManager::menu_edit_rotate_180), SIGNAL(triggered()), this, SLOT(rotate180()));
     connect(am.action(DkActionManager::menu_edit_transform), SIGNAL(triggered()), this, SLOT(resizeImage()));
     connect(am.action(DkActionManager::menu_edit_orientation), SIGNAL(triggered()), this, SLOT(setExifOrientation()));
     connect(am.action(DkActionManager::menu_edit_delete), SIGNAL(triggered()), this, SLOT(deleteImage()));
@@ -1563,34 +1560,6 @@ void DkViewPort::togglePattern(bool show)
 {
     emit infoSignal((show) ? tr("Transparency Pattern Enabled") : tr("Transparency Pattern Disabled"));
     DkBaseViewPort::togglePattern(show);
-}
-
-// edit image --------------------------------------------------------------------
-void DkViewPort::rotateCW()
-{
-    if (!mController->applyPluginChanges(true))
-        return;
-
-    if (mLoader)
-        mLoader->rotateImage(90);
-}
-
-void DkViewPort::rotateCCW()
-{
-    if (!mController->applyPluginChanges(true))
-        return;
-
-    if (mLoader)
-        mLoader->rotateImage(-90);
-}
-
-void DkViewPort::rotate180()
-{
-    if (!mController->applyPluginChanges(true))
-        return;
-
-    if (mLoader)
-        mLoader->rotateImage(180);
 }
 
 // file handling --------------------------------------------------------------------
