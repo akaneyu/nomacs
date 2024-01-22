@@ -142,7 +142,6 @@ protected:
     bool mSelected = false;
 
     QFileInfo mFileInfo;
-    QVector<QImage> scaledImages;
 
 #ifdef WITH_QUAZIP
     QSharedPointer<DkZipContainer> mZipData;

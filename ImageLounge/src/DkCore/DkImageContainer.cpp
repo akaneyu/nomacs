@@ -117,8 +117,6 @@ bool DkImageContainer::operator>=(const DkImageContainer &o) const
 
 void DkImageContainer::clear()
 {
-    scaledImages.clear(); // invalid now
-
     if (mLoader)
         mLoader->release();
     if (mFileBuffer)
@@ -128,22 +126,16 @@ void DkImageContainer::clear()
 
 void DkImageContainer::undo()
 {
-    scaledImages.clear(); // invalid now
-
     getLoader()->undo();
 }
 
 void DkImageContainer::redo()
 {
-    scaledImages.clear(); // invalid now
-
     getLoader()->redo();
 }
 
 void DkImageContainer::setHistoryIndex(int idx)
 {
-    scaledImages.clear(); // invalid now
-
     getLoader()->setHistoryIndex(idx);
 }
 
@@ -319,54 +311,28 @@ QImage DkImageContainer::pixmap()
 
 QImage DkImageContainer::imageScaledToHeight(int height)
 {
-    // check cash first
-    for (const QImage &img : scaledImages) {
-        if (img.height() == height)
-            return img;
-    }
+    // NOTE: scaled image cache is now disabled
 
-    // cache it
     QImage sImg = image().scaledToHeight(height, Qt::SmoothTransformation);
-    scaledImages << sImg;
-
-    // clean up
-    if (scaledImages.size() > 10)
-        scaledImages.pop_front();
 
     return sImg;
 }
 
 QImage DkImageContainer::imageScaledToWidth(int width)
 {
-    // check cache first
-    for (const QImage &img : scaledImages) {
-        if (img.width() == width)
-            return img;
-    }
-
-    // cache it
     QImage sImg = image().scaledToWidth(width, Qt::SmoothTransformation);
-    scaledImages << sImg;
-
-    // clean up
-    if (scaledImages.size() > 10)
-        scaledImages.pop_front();
 
     return sImg;
 }
 
 void DkImageContainer::setImage(const QImage &img, const QString &editName)
 {
-    scaledImages.clear(); // invalid now
-
     getLoader()->setEditImage(img, editName);
     mEdited = true;
 }
 
 void DkImageContainer::setImage(const QImage &img, const QString &editName, const QString &filePath)
 {
-    scaledImages.clear(); // invalid now
-
     setFilePath(mFilePath);
     getLoader()->setImage(img, editName, filePath); // set new image
     mEdited = true;
