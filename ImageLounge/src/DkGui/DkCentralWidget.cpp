@@ -697,6 +697,7 @@ void DkCentralWidget::addTab(QSharedPointer<DkTabInfo> tabInfo, bool background)
 {
     mTabInfos.push_back(tabInfo);
     mTabbar->addTab(tabInfo->getTabText());
+    mTabbar->setTabIcon(tabInfo->getTabIdx(), tabInfo->getIcon());
 
     if (!background)
         mTabbar->setCurrentIndex(tabInfo->getTabIdx());
@@ -730,10 +731,12 @@ void DkCentralWidget::removeTab(int tabIdx)
     }
 
     mTabInfos.remove(tabIdx);
-    mTabbar->removeTab(tabIdx);
     updateTabIdx();
+    mTabbar->removeTab(tabIdx);
+    //updateTabIdx();
 
-    switchWidget(mTabbar->currentIndex());
+    // NOTE: this causes the existing tab to be replaced with a random widget
+    //switchWidget(mTabbar->currentIndex());
 
     if (mTabInfos.size() == 0) { // Make sure we have at least one tab
         addTab();
