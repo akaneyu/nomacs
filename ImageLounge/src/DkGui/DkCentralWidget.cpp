@@ -1147,7 +1147,26 @@ void DkCentralWidget::loadFileToTab(const QString &filePath)
 
 void DkCentralWidget::loadFile(const QString &filePath, bool newTab)
 {
-    if (!newTab) {
+    // if the specified file is in the existing tabs, activate it
+    if (DkSettingsManager::param().global().checkOpenDuplicates) { // Should we check for duplicates?
+        for (auto tab : mTabInfos) {
+            if (tab->getFilePath().compare(filePath) == 0) {
+                // if the tab is currently active, reload it
+                if (tab->getTabIdx() == mTabbar->currentIndex()) {
+                    getViewPort()->reloadFile();
+
+                // otherwise, activate it
+                } else {
+                    setActiveTab(tab->getTabIdx());
+                }
+
+                return;
+            }
+        }
+    }
+
+    // load the file into the current tab
+    if (!newTab && !DkSettingsManager::param().global().openFileInNewTab) {
         if (!hasViewPort())
             createViewPort();
 
@@ -1155,8 +1174,8 @@ void DkCentralWidget::loadFile(const QString &filePath, bool newTab)
         return;
     }
 
-    // no tab to reuse -> create a new tab
-    addTab(filePath, -1, mTabInfos.size() > 0);
+    // no tab to reuse -> create a new tab ... and activate it
+    addTab(filePath, -1 /*, mTabInfos.size() > 0*/);
 }
 
 /**
@@ -1165,9 +1184,10 @@ void DkCentralWidget::loadFile(const QString &filePath, bool newTab)
  */
 void DkCentralWidget::loadDirToTab(const QString &dirPath)
 {
-    if (mTabInfos.size() > 1
-        || (!mTabInfos.empty() && mTabInfos.at(0)->getMode() != DkTabInfo::tab_empty && mTabInfos.at(0)->getMode() != DkTabInfo::tab_recent_files
-            && mTabInfos.at(0)->getMode() != DkTabInfo::tab_single_image && mTabInfos.at(0)->getMode() != DkTabInfo::tab_thumb_preview)) {
+    // if (mTabInfos.size() > 1
+    //     || (!mTabInfos.empty() && mTabInfos.at(0)->getMode() != DkTabInfo::tab_empty && mTabInfos.at(0)->getMode() != DkTabInfo::tab_recent_files
+    //         && mTabInfos.at(0)->getMode() != DkTabInfo::tab_single_image && mTabInfos.at(0)->getMode() != DkTabInfo::tab_thumb_preview)) {
+    if (DkSettingsManager::param().global().openFileInNewTab) {
         addTab();
     }
 

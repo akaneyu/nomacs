@@ -148,6 +148,7 @@ public slots:
     void on_themeBox_currentIndexChanged(const QString &text) const;
     void on_showRecentFiles_toggled(bool checked) const;
     void on_logRecentFiles_toggled(bool checked) const;
+    void on_openFileInNewTab_toggled(bool checked) const;
     void on_checkOpenDuplicates_toggled(bool checked) const;
     void on_extendedTabs_toggled(bool checked) const;
     void on_closeOnEsc_toggled(bool checked) const;

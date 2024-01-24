@@ -389,6 +389,7 @@ void DkSettings::load(QSettings &settings, bool defaults)
     settings.beginGroup("GlobalSettings");
 
     global_p.skipImgs = settings.value("skipImgs", global_p.skipImgs).toInt();
+    global_p.openFileInNewTab = settings.value("openFileInNewTab", global_p.openFileInNewTab).toBool();
     global_p.checkOpenDuplicates = settings.value("checkOpenDuplicates", global_p.checkOpenDuplicates).toBool();
     global_p.extendedTabs = settings.value("extendedTabs", global_p.extendedTabs).toBool();
 
@@ -603,6 +604,8 @@ void DkSettings::save(QSettings &settings, bool force)
 
     if (force || global_p.skipImgs != global_d.skipImgs)
         settings.setValue("skipImgs", global_p.skipImgs);
+    if (force || global_p.openFileInNewTab != global_d.openFileInNewTab)
+        settings.setValue("openFileInNewTab", global_p.openFileInNewTab);
     if (force || global_p.checkOpenDuplicates != global_d.checkOpenDuplicates)
         settings.setValue("checkOpenDuplicates", global_p.checkOpenDuplicates);
     if (force || global_p.extendedTabs != global_d.extendedTabs)
@@ -848,6 +851,7 @@ void DkSettings::setToDefaultSettings()
     global_p.pinnedFiles = QStringList();
     global_p.searchHistory = QStringList();
     global_p.recentFolders = QStringList();
+    global_p.openFileInNewTab = true;
     global_p.logRecentFiles = true;
     global_p.askToSaveDeletedFiles = false;
     global_p.tmpPath = "";

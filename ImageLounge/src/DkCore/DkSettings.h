@@ -261,6 +261,7 @@ public:
         QStringList recentFolders;
         QStringList pinnedFiles;
         bool logRecentFiles;
+        bool openFileInNewTab;
         bool checkOpenDuplicates;
         bool extendedTabs;
         bool askToSaveDeletedFiles;

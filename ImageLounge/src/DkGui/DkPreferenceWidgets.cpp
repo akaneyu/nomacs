@@ -362,6 +362,11 @@ void DkGeneralPreference::createLayout()
     cbLogRecentFiles->setToolTip(tr("If checked, recent files will be saved."));
     cbLogRecentFiles->setChecked(DkSettingsManager::param().global().logRecentFiles);
 
+    QCheckBox *cbOpenFileInNewTab = new QCheckBox(tr("Always Open File in New Tab"), this);
+    cbOpenFileInNewTab->setObjectName("openFileInNewTab");
+    cbOpenFileInNewTab->setToolTip(tr("Always open a file in a new tab"));
+    cbOpenFileInNewTab->setChecked(DkSettingsManager::param().global().openFileInNewTab);
+
     QCheckBox *cbCheckOpenDuplicates = new QCheckBox(tr("Check for Duplicates on Open"), this);
     cbCheckOpenDuplicates->setObjectName("checkOpenDuplicates");
     cbCheckOpenDuplicates->setToolTip(tr("If any files are opened which are already open in a tab, don't open them again."));
@@ -423,6 +428,7 @@ void DkGeneralPreference::createLayout()
     DkGroupWidget *generalGroup = new DkGroupWidget(tr("General"), this);
     generalGroup->addWidget(cbRecentFiles);
     generalGroup->addWidget(cbLogRecentFiles);
+    generalGroup->addWidget(cbOpenFileInNewTab);
     generalGroup->addWidget(cbCheckOpenDuplicates);
     generalGroup->addWidget(cbExtendedTabs);
     generalGroup->addWidget(cbLoopImages);
@@ -513,6 +519,12 @@ void DkGeneralPreference::on_logRecentFiles_toggled(bool checked) const
 {
     if (DkSettingsManager::param().global().logRecentFiles != checked)
         DkSettingsManager::param().global().logRecentFiles = checked;
+}
+
+void DkGeneralPreference::on_openFileInNewTab_toggled(bool checked) const
+{
+    if (DkSettingsManager::param().global().openFileInNewTab != checked)
+        DkSettingsManager::param().global().openFileInNewTab = checked;
 }
 
 void DkGeneralPreference::on_checkOpenDuplicates_toggled(bool checked) const
