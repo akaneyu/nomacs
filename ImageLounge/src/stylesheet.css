@@ -72,6 +72,10 @@ QPushButton#flatWhite:pressed {
 	background-color: rgba(255,255,255,.4);
 }
 
+QTabBar::tab {
+	width: 300px;
+}
+
 QTabBar::close-button {
     image: url(:/nomacs/img/close.svg);
 }
