@@ -34,6 +34,8 @@
 #include <QImage>
 #include <QSharedPointer>
 #include <QThread>
+#include <QQueue>
+#include <QSemaphore>
 #pragma warning(pop) // no warnings from includes - end
 
 #pragma warning(disable : 4251) // TODO: remove
@@ -165,7 +167,8 @@ protected:
     int mMaxThumbSize;
 };
 
-class DllCoreExport DkThumbNailT : public QObject, public DkThumbNail
+class DllCoreExport DkThumbNailT : public QObject, public DkThumbNail,
+        public QEnableSharedFromThis<DkThumbNailT>
 {
     Q_OBJECT
 
@@ -181,7 +184,7 @@ public:
      **/
     int hasImage() const
     {
-        if (mThumbWatcher.isRunning())
+        if (mFetching)
             return loading;
         else
             return DkThumbNail::hasImage();
@@ -193,20 +196,18 @@ public:
         emit thumbLoadedSignal(true);
     };
 
+    QImage computeCall(const QString &filePath, QSharedPointer<QByteArray> ba, int forceLoad, int maxThumbSize);
+    void thumbLoaded(const QImage &img);
+
 signals:
     void thumbLoadedSignal(bool loaded = true);
 
-protected slots:
-    void thumbLoaded();
-
 protected:
-    QImage computeCall(const QString &filePath, QSharedPointer<QByteArray> ba, int forceLoad, int maxThumbSize);
-
-    QFutureWatcher<QImage> mThumbWatcher;
     bool mFetching;
     int mForceLoad;
 };
 
+// currently used by DkUtils::exists
 class DkThumbsThreadPool
 {
 public:
@@ -220,6 +221,62 @@ private:
     DkThumbsThreadPool(const DkThumbsThreadPool &);
 
     QThreadPool *mPool;
+};
+
+class DkThumbsFetchWorker : public QObject {
+    Q_OBJECT
+
+public:
+    DkThumbsFetchWorker();
+    virtual ~DkThumbsFetchWorker() {};
+
+signals:
+    void finished() const;
+    void processed() const;
+
+public slots:
+    void process();
+};
+
+class DkThumbsFetchController : public QObject
+{
+    Q_OBJECT
+
+public:
+    static DkThumbsFetchController &instance();
+    virtual ~DkThumbsFetchController() {};
+
+    struct RequestOption {
+        QString filePath;
+        QSharedPointer<QByteArray> ba;
+        int forceLoad;
+        int maxThumbSize;
+    };
+
+    QSemaphore &numRequests() { return mNumRequests; }
+    QSemaphore &numRequestsAvailable() { return mNumRequestsAvailable; }
+    QMutex &queueMutex() { return mQueueMutex; }
+    QQueue<QSharedPointer<DkThumbNailT>> &requestQueue() { return mRequestQueue; }
+    QQueue<RequestOption> &requestOptionQueue() { return mRequestOptionQueue; }
+    QQueue<QSharedPointer<DkThumbNailT>> &resultQueue() { return mResultQueue; }
+    QQueue<QImage> &resultDataQueue() { return mResultDataQueue; }
+    void init();
+    void release();
+    void enqueue(QSharedPointer<DkThumbNailT> thumb, const QString &filePath,
+            QSharedPointer<QByteArray> ba, int forceLoad, int maxThumbSize);
+
+public slots:
+    void processed();
+
+private:
+    DkThumbsFetchController();
+    QSemaphore mNumRequests;
+    QSemaphore mNumRequestsAvailable;
+    QMutex mQueueMutex;
+    QQueue<QSharedPointer<DkThumbNailT>> mRequestQueue;
+    QQueue<RequestOption> mRequestOptionQueue;
+    QQueue<QSharedPointer<DkThumbNailT>> mResultQueue;
+    QQueue<QImage> mResultDataQueue;
 };
 
 }

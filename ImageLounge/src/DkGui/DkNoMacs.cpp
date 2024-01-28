@@ -178,6 +178,9 @@ DkNoMacs::~DkNoMacs()
 
 void DkNoMacs::init()
 {
+    // start the concurrent queue for fetching thumbnails
+    DkThumbsFetchController::instance().init();
+
     // assign icon -> in windows the 32px version
     QString iconPath = ":/nomacs/img/nomacs.svg";
     loadStyleSheet();
@@ -403,6 +406,8 @@ void DkNoMacs::closeEvent(QCloseEvent *event)
 
         nmc::DkSettingsManager::param().save();
     }
+
+    DkThumbsFetchController::instance().release();
 
     QMainWindow::closeEvent(event);
 }

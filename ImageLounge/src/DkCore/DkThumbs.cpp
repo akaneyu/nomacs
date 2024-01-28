@@ -287,8 +287,6 @@ DkThumbNailT::DkThumbNailT(const QString &filePath, const QImage &img)
 
 DkThumbNailT::~DkThumbNailT()
 {
-    mThumbWatcher.blockSignals(true);
-    mThumbWatcher.cancel();
 }
 
 bool DkThumbNailT::fetchThumb(int forceLoad /* = false */, QSharedPointer<QByteArray> ba)
@@ -309,15 +307,9 @@ bool DkThumbNailT::fetchThumb(int forceLoad /* = false */, QSharedPointer<QByteA
     mFetching = true;
     mForceLoad = forceLoad;
 
-    connect(&mThumbWatcher, SIGNAL(finished()), this, SLOT(thumbLoaded()), Qt::UniqueConnection);
-
-    mThumbWatcher.setFuture(QtConcurrent::run(DkThumbsThreadPool::pool(), // load thumbnails on their dedicated pool
-                                              this,
-                                              &nmc::DkThumbNailT::computeCall,
-                                              mFile,
-                                              ba,
-                                              forceLoad,
-                                              mMaxThumbSize));
+    // process with the concurrent queue
+    DkThumbsFetchController::instance().enqueue(sharedFromThis(), mFile, ba,
+            forceLoad, mMaxThumbSize);
 
     return true;
 }
@@ -328,11 +320,9 @@ QImage DkThumbNailT::computeCall(const QString &filePath, QSharedPointer<QByteAr
     return DkImage::createThumb(thumb);
 }
 
-void DkThumbNailT::thumbLoaded()
+void DkThumbNailT::thumbLoaded(const QImage &img)
 {
-    QFuture<QImage> future = mThumbWatcher.future();
-
-    mImg = future.result();
+    mImg = img;
 
     if (mImg.isNull() && mForceLoad != force_exif_thumb)
         mImgExists = false;
@@ -362,6 +352,135 @@ QThreadPool *DkThumbsThreadPool::pool()
 void DkThumbsThreadPool::clear()
 {
     pool()->clear();
+}
+
+// DkThumbsFetchWorker --------------------------------------------------------------------
+
+DkThumbsFetchWorker::DkThumbsFetchWorker()
+{
+}
+
+void DkThumbsFetchWorker::DkThumbsFetchWorker::process()
+{
+    for ( ; ; ) {
+        DkThumbsFetchController &controller = DkThumbsFetchController::instance();
+
+        // wait for request
+        controller.numRequests().acquire();
+
+        QSharedPointer<DkThumbNailT> thumb;
+        DkThumbsFetchController::RequestOption option;
+        {
+            QMutexLocker lock(&controller.queueMutex());
+
+            // exit gracefully if the queue is empty
+            if (controller.requestQueue().size() <= 0) {
+                break;
+            }
+
+            // get request
+            thumb = controller.requestQueue().dequeue();
+            option = controller.requestOptionQueue().dequeue();
+        }
+
+        // process
+        auto img = thumb->computeCall(option.filePath, option.ba,
+                option.forceLoad, option.maxThumbSize);
+
+        {
+            QMutexLocker lock(&controller.queueMutex());
+
+            // put request
+            controller.resultQueue().enqueue(thumb);
+            controller.resultDataQueue().enqueue(img);
+        }
+
+        controller.numRequestsAvailable().release();
+
+        emit processed();
+    }
+
+    emit finished();
+}
+
+// DkThumbsFetchController --------------------------------------------------------------------
+
+DkThumbsFetchController::DkThumbsFetchController()
+    : mNumRequestsAvailable(1000)      // queue size
+{
+}
+
+DkThumbsFetchController &DkThumbsFetchController::instance()
+{
+    static DkThumbsFetchController inst;
+    return inst;
+}
+
+void DkThumbsFetchController::init()
+{
+    QThread* thread = new QThread();
+    DkThumbsFetchWorker* worker = new DkThumbsFetchWorker();
+    worker->moveToThread(thread);
+
+    connect(thread, SIGNAL(started()), worker, SLOT(process()));
+    connect(worker, SIGNAL(finished()), thread, SLOT(quit()));
+    connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
+    connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
+
+    connect(worker, SIGNAL(processed()), this, SLOT(processed()));
+
+    thread->start();
+}
+
+void DkThumbsFetchController::release()
+{
+    {
+        // this makes the worker exit gracefully
+        QMutexLocker lock(&mQueueMutex);
+        mRequestQueue.clear();
+        mRequestOptionQueue.clear();
+    }
+
+    mNumRequests.release();     // request with empty
+}
+
+void DkThumbsFetchController::enqueue(QSharedPointer<DkThumbNailT> thumb,
+        const QString &filePath, QSharedPointer<QByteArray> ba,
+        int forceLoad, int maxThumbSize)
+{
+    RequestOption option;
+    option.filePath = filePath;
+    option.ba = ba;
+    option.forceLoad = forceLoad;
+    option.maxThumbSize = maxThumbSize;
+
+    // wait while the request queue is full
+    // (adjust the queue size if ui tends to be unresponsive)
+    mNumRequestsAvailable.acquire();
+
+    {
+        // put request
+        QMutexLocker lock(&mQueueMutex);
+        mRequestQueue.enqueue(thumb);
+        mRequestOptionQueue.enqueue(option);
+    }
+
+    mNumRequests.release();
+}
+
+void DkThumbsFetchController::processed()
+{
+    QSharedPointer<DkThumbNailT> thumb;
+    QImage img;
+    {
+        // get result
+        QMutexLocker lock(&mQueueMutex);
+        thumb = mResultQueue.dequeue();
+        img = mResultDataQueue.dequeue();
+    }
+
+    // post process
+    thumb->thumbLoaded(img);
 }
 
 }
