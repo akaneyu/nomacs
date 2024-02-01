@@ -140,7 +140,7 @@ bool DkTabInfo::setDirPath(const QString &dirPath)
     if (!di.isDir())
         return false;
 
-    bool dirIsLoaded = mImageLoader->loadDir(dirPath);
+    bool dirIsLoaded = mImageLoader->loadDirRecursive(dirPath);
     if (dirIsLoaded) {
         setMode(tab_thumb_preview);
         return true;
@@ -849,18 +849,18 @@ void DkCentralWidget::showThumbView(bool show)
                 tw->getThumbWidget()->ensureVisible(tabInfo->getImage());
 
             // mViewport->connectLoader(tabInfo->getImageLoader(), false);
-            connect(tw, SIGNAL(updateDirSignal(const QString &)), tabInfo->getImageLoader().data(), SLOT(loadDir(const QString &)), Qt::UniqueConnection);
+            connect(tw, SIGNAL(updateDirSignal(const QString &)), tabInfo->getImageLoader().data(), SLOT(loadDirRecursive(const QString &)), Qt::UniqueConnection);
             connect(tw,
                     SIGNAL(filterChangedSignal(const QString &)),
                     tabInfo->getImageLoader().data(),
-                    SLOT(setFolderFilter(const QString &)),
+                    SLOT(setFolderFilterRecursive(const QString &)),
                     Qt::UniqueConnection);
         }
 
     } else {
         if (auto tw = getThumbScrollWidget()) {
-            disconnect(tw, SIGNAL(updateDirSignal(const QString &)), tabInfo->getImageLoader().data(), SLOT(loadDir(const QString &)));
-            disconnect(tw, SIGNAL(filterChangedSignal(const QString &)), tabInfo->getImageLoader().data(), SLOT(setFolderFilter(const QString &)));
+            disconnect(tw, SIGNAL(updateDirSignal(const QString &)), tabInfo->getImageLoader().data(), SLOT(loadDirRecursive(const QString &)));
+            disconnect(tw, SIGNAL(filterChangedSignal(const QString &)), tabInfo->getImageLoader().data(), SLOT(setFolderFilterRecursive(const QString &)));
         }
         // mViewport->connectLoader(tabInfo->getImageLoader(), true);
         showViewPort(true); // TODO: this triggers switchWidget - but switchWidget might also trigger showThumbView(false)

@@ -71,7 +71,8 @@ public:
     DkImageLoader(const QString &filePath = QString());
     virtual ~DkImageLoader();
 
-    static QStringList getFoldersRecursive(const QString &dirPath);
+    static QStringList getFolders(const QString &dirPath);
+    static void getFoldersRecursive(const QString &dirPath, QStringList &subFolders);
     QFileInfoList updateSubFolders(const QString &rootDirPath);
     QFileInfoList getFilteredFileInfoList(const QString &dirPath,
                                           QStringList ignoreKeywords = QStringList(),
@@ -96,7 +97,7 @@ public:
     void lastFile();
     void clearPath();
     void loadLastDir();
-    QSharedPointer<DkImageContainerT> getSkippedImage(int skipIdx, bool searchFile = true, bool recursive = false);
+    QSharedPointer<DkImageContainerT> getSkippedImage(int skipIdx, bool searchFile = true);
 
     QString getDirPath() const;
     QString getSavePath() const;
@@ -164,11 +165,13 @@ public slots:
     void downloadFile(const QUrl &url);
     bool deleteFile();
     QString saveTempFile(const QImage &img, const QString &name = "img", const QString &fileExt = ".png", bool force = false, bool threaded = true);
-    void setFolderFilter(const QString &filter);
+    void setFolderFilter(const QString &filter, bool scanRecursive = false);
+    void setFolderFilterRecursive(const QString &filter);
     void setFolderFilters(const QStringList &filters);
     QString getFolderFilter();
     QStringList getFolderFilters();
-    bool loadDir(const QString &newDirPath, bool scanRecursive = true);
+    bool loadDir(const QString &newDirPath, bool scanRecursive = false);
+    bool loadDirRecursive(const QString &newDirPath);
     void errorDialog(const QString &msg) const;
     void loadFileAt(int idx);
 
@@ -184,8 +187,6 @@ public slots:
 protected:
     // functions
     void updateCacher(QSharedPointer<DkImageContainerT> imgC);
-    int getNextFolderIdx(int folderIdx);
-    int getPrevFolderIdx(int folderIdx);
     void updateHistory();
     void sortImagesThreaded(QVector<QSharedPointer<DkImageContainerT>> images);
     void createImages(const QFileInfoList &files, bool sort = true);

@@ -210,11 +210,6 @@ QLineEdit#DkWarningEdit[error="true"] {
 	color: #9f1d1d;
 }
 
-QListView#resultListView[empty="true"] {
-	color: #777777; 
-	font-style: italic;
-}
-
 QListWidget#historyList {
 	font-size: 12pt;
 }

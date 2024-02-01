@@ -37,6 +37,8 @@
 #include <QLineEdit>
 #include <QMainWindow>
 #include <QPrintPreviewWidget>
+#include <QStandardItemModel>
+#include <QSortFilterProxyModel>
 #pragma warning(pop) // no warnings from includes - end
 
 #include "DkBasicLoader.h"
@@ -46,6 +48,7 @@ class QStandardItemModel;
 class QStandardItem;
 class QTableView;
 class QStringListModel;
+class QSortFilterProxyModel;
 class QListView;
 class QTextEdit;
 class QListWidget;
@@ -245,7 +248,6 @@ public:
     DkSearchDialog(QWidget *parent = 0, Qt::WindowFlags flags = Qt::WindowFlags());
 
     void setFiles(const QStringList &fileList);
-    void setPath(const QString &dirPath);
     bool filterPressed() const;
     void setDefaultButton(int defaultButton = find_button);
 
@@ -253,7 +255,6 @@ public slots:
     void on_searchBar_textChanged(const QString &text);
     void on_filterButton_pressed();
     void on_resultListView_doubleClicked(const QModelIndex &modelIndex);
-    void on_resultListView_clicked(const QModelIndex &modelIndex);
     virtual void accept() override;
 
 signals:
@@ -263,9 +264,9 @@ signals:
 protected:
     void updateHistory();
     void init();
-    QStringList makeViewable(const QStringList &resultList, bool forceAll = false);
 
-    QStringListModel *mStringModel = 0;
+    QStandardItemModel mSourceModel;
+    QSortFilterProxyModel mProxyModel;
     QListView *mResultListView = 0;
     QLineEdit *mSearchBar = 0;
     QDialogButtonBox *mButtons = 0;
@@ -273,12 +274,6 @@ protected:
     QPushButton *mFilterButton = 0;
 
     QString mCurrentSearch;
-
-    QString mPath;
-    QStringList mFileList;
-    QStringList mResultList;
-
-    QString mEndMessage;
 
     bool mAllDisplayed = true;
     bool mIsFilterPressed = false;

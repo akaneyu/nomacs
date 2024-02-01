@@ -196,7 +196,6 @@ public:
     static QString nowString();
     static QString colorToString(const QColor &col);
     static QString readableByte(float bytes);
-    static QStringList filterStringList(const QString &query, const QStringList &list);
     static bool moveToTrash(const QString &filePath);
     static QList<QUrl> findUrlsInTextNewline(QString text);
 

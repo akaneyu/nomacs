@@ -1312,16 +1312,15 @@ void DkNoMacs::find(bool filterAction)
         searchDialog->setDefaultButton(db);
 
         searchDialog->setFiles(getTabWidget()->getCurrentImageLoader()->getFileNames());
-        searchDialog->setPath(getTabWidget()->getCurrentImageLoader()->getDirPath());
 
-        connect(searchDialog, SIGNAL(filterSignal(const QString &)), getTabWidget()->getCurrentImageLoader().data(), SLOT(setFolderFilter(const QString &)));
+        connect(searchDialog, SIGNAL(filterSignal(const QString &)), getTabWidget()->getCurrentImageLoader().data(), SLOT(setFolderFilterRecursive(const QString &)));
         connect(searchDialog, SIGNAL(loadFileSignal(const QString &)), getTabWidget(), SLOT(loadFile(const QString &)));
         int answer = searchDialog->exec();
 
         DkActionManager::instance().action(DkActionManager::menu_tools_filter)->setChecked(answer == DkSearchDialog::filter_button);
     } else {
         // remove the filter
-        getTabWidget()->getCurrentImageLoader()->setFolderFilter(QString());
+        getTabWidget()->getCurrentImageLoader()->setFolderFilterRecursive(QString());
     }
 }
 

@@ -632,8 +632,6 @@ void DkSearchDialog::init()
     setObjectName("DkSearchDialog");
     setWindowTitle(tr("Find & Filter"));
 
-    mEndMessage = tr("Load All");
-
     QVBoxLayout *layout = new QVBoxLayout(this);
 
     QCompleter *history = new QCompleter(DkSettingsManager::param().global().searchHistory, this);
@@ -643,11 +641,12 @@ void DkSearchDialog::init()
     mSearchBar->setToolTip(tr("Type search words or a regular expression"));
     mSearchBar->setCompleter(history);
 
-    mStringModel = new QStringListModel(this);
+    mProxyModel.setSourceModel(&mSourceModel);
+    mProxyModel.setFilterCaseSensitivity(Qt::CaseInsensitive);
 
     mResultListView = new QListView(this);
     mResultListView->setObjectName("resultListView");
-    mResultListView->setModel(mStringModel);
+    mResultListView->setModel(&mProxyModel);
     mResultListView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     mResultListView->setSelectionMode(QAbstractItemView::SingleSelection);
 
@@ -673,14 +672,12 @@ void DkSearchDialog::init()
 
 void DkSearchDialog::setFiles(const QStringList &fileList)
 {
-    mFileList = fileList;
-    mResultList = fileList;
-    mStringModel->setStringList(makeViewable(fileList));
-}
-
-void DkSearchDialog::setPath(const QString &dirPath)
-{
-    mPath = dirPath;
+    for (const QString &fileName : fileList) {
+        QFileInfo fileInfo = QFileInfo(fileName);
+        QStandardItem *item = new QStandardItem(fileInfo.fileName());
+        item->setData(fileInfo.absoluteFilePath());
+        mSourceModel.appendRow(item);
+    }
 }
 
 bool DkSearchDialog::filterPressed() const
@@ -695,66 +692,39 @@ void DkSearchDialog::on_searchBar_textChanged(const QString &text)
     if (text == mCurrentSearch)
         return;
 
-    mResultList = DkUtils::filterStringList(text, mFileList);
-    qDebug() << "searching [" << text << "] - converted to individual keywords [" << text.split(" ") << "] takes: " << dt;
+    mProxyModel.setFilterFixedString(text);
+
+    qDebug() << "searching [" << text << "] takes: " << dt;
     mCurrentSearch = text;
 
-    if (mResultList.empty()) {
-        QStringList answerList;
-        answerList.append(tr("No Matching Items"));
-        mStringModel->setStringList(answerList);
-
-        mResultListView->setProperty("empty", true);
-
+    if (mProxyModel.rowCount() == 0) {
         mFilterButton->setEnabled(false);
         mButtons->button(QDialogButtonBox::Ok)->setEnabled(false);
     } else {
         mFilterButton->setEnabled(true);
         mButtons->button(QDialogButtonBox::Ok)->setEnabled(true);
-        mStringModel->setStringList(makeViewable(mResultList));
-        mResultListView->selectionModel()->setCurrentIndex(mStringModel->index(0, 0), QItemSelectionModel::SelectCurrent);
-        mResultListView->setProperty("empty", false);
+        mResultListView->setCurrentIndex(mProxyModel.index(0, 0));
     }
-
-    mResultListView->style()->unpolish(mResultListView);
-    mResultListView->style()->polish(mResultListView);
-    mResultListView->update();
 
     qDebug() << "searching takes (total): " << dt;
 }
 
 void DkSearchDialog::on_resultListView_doubleClicked(const QModelIndex &modelIndex)
 {
-    if (modelIndex.data().toString() == mEndMessage) {
-        mStringModel->setStringList(makeViewable(mResultList, true));
-        return;
-    }
-
-    emit loadFileSignal(QFileInfo(mPath, modelIndex.data().toString()).absoluteFilePath());
+    emit loadFileSignal(modelIndex.data(Qt::UserRole + 1).toString());
     close();
-}
-
-void DkSearchDialog::on_resultListView_clicked(const QModelIndex &modelIndex)
-{
-    if (modelIndex.data().toString() == mEndMessage)
-        mStringModel->setStringList(makeViewable(mResultList, true));
 }
 
 void DkSearchDialog::accept()
 {
-    if (mResultListView->selectionModel()->currentIndex().data().toString() == mEndMessage) {
-        mStringModel->setStringList(makeViewable(mResultList, true));
-        return;
-    }
-
     updateHistory();
 
     // ok load the selected file
-    QString fileName = mResultListView->selectionModel()->currentIndex().data().toString();
+    QString fileName = mResultListView->currentIndex().data(Qt::UserRole + 1).toString();
     qDebug() << "opening filename: " << fileName;
 
     if (!fileName.isEmpty())
-        emit loadFileSignal(QFileInfo(mPath, fileName).absoluteFilePath());
+        emit loadFileSignal(fileName);
 
     QDialog::accept();
 }
@@ -790,25 +760,6 @@ void DkSearchDialog::updateHistory()
 
     // QCompleter* history = new QCompleter(DkSettingsManager::param().global().searchHistory);
     // searchBar->setCompleter(history);
-}
-
-QStringList DkSearchDialog::makeViewable(const QStringList &resultList, bool forceAll)
-{
-    QStringList answerList;
-
-    // if size > 1000 it gets slow -> cut at 1000 and make an entry for 'expand'
-    if (!forceAll && resultList.size() > 1000) {
-        for (int idx = 0; idx < 1000; idx++)
-            answerList.append(resultList[idx]);
-        answerList.append(mEndMessage);
-
-        mAllDisplayed = false;
-    } else {
-        mAllDisplayed = true;
-        answerList = resultList;
-    }
-
-    return answerList;
 }
 
 // DkResizeDialog --------------------------------------------------------------------

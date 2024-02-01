@@ -818,38 +818,6 @@ QString DkUtils::colorToString(const QColor &col)
         + QString::number((float)col.alpha() / 255.0f * 100.0f) + "%)";
 }
 
-QStringList DkUtils::filterStringList(const QString &query, const QStringList &list)
-{
-    // white space is the magic thingy
-    QStringList queries = query.split(" ");
-    QStringList resultList = list;
-
-    for (int idx = 0; idx < queries.size(); idx++) {
-        // Detect and correct special case where a space is leading or trailing the search term - this should be significant
-        if (idx == 0 && queries.size() > 1 && queries[idx].size() == 0)
-            queries[idx] = " " + queries[idx + 1];
-        if (idx == queries.size() - 1 && queries.size() > 2 && queries[idx].size() == 0)
-            queries[idx] = queries[idx - 1] + " ";
-        // The queries will be repeated, but this is okay - it will just be matched both with and without the space.
-        resultList = resultList.filter(queries[idx], Qt::CaseInsensitive);
-        qDebug() << "query: " << queries[idx];
-    }
-
-    // if string match returns nothing -> try a regexp
-    if (resultList.empty()) {
-        QRegularExpression regExp(query);
-        resultList = list.filter(regExp);
-
-        if (resultList.empty()) {
-            QString wildcardExp = QRegularExpression::wildcardToRegularExpression(query);
-            QRegularExpression re(QRegularExpression::anchoredPattern(wildcardExp), QRegularExpression::CaseInsensitiveOption);
-            resultList = list.filter(re);
-        }
-    }
-
-    return resultList;
-}
-
 bool DkUtils::moveToTrash(const QString &filePath)
 {
     QFileInfo fileInfo(filePath);
