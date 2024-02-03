@@ -95,7 +95,7 @@ public:
     // file selection
     void firstFile();
     void lastFile();
-    void clearPath();
+    void clearPath(bool clearImages);
     void loadLastDir();
     QSharedPointer<DkImageContainerT> getSkippedImage(int skipIdx, bool searchFile = true);
 
@@ -114,8 +114,8 @@ public:
     bool hasSvg() const;
     QString fileName() const;
 
-    void deactivate();
-    void activate(bool isActive = true);
+    void deactivate(bool clearImages = true);
+    void activate(bool isActive = true, bool clearImages = true);
     bool hasImage() const;
     bool isEdited() const;
     int numFiles() const;

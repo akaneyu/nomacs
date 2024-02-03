@@ -157,13 +157,16 @@ DkImageLoader::~DkImageLoader()
  * about the current directory. It also destroys
  * the currently loaded image.
  **/
-void DkImageLoader::clearPath()
+void DkImageLoader::clearPath(bool clearImages)
 {
     // lastFileLoaded must exist
     if (mCurrentImage && mCurrentImage->exists()) {
         mCurrentImage->receiveUpdates(this, false);
         mLastImageLoaded = mCurrentImage;
-        mImages.clear();
+
+        if (clearImages) {
+            mImages.clear();
+        }
 
         // only clear the current image if it exists
         mCurrentImage.clear();
@@ -717,9 +720,9 @@ bool DkImageLoader::unloadFile()
 /**
  * Convenience function see @activate.
  **/
-void DkImageLoader::deactivate()
+void DkImageLoader::deactivate(bool clearImages)
 {
-    activate(false);
+    activate(false, clearImages);
 }
 
 /**
@@ -729,12 +732,12 @@ void DkImageLoader::deactivate()
  * should save some memory. In addition, all signals are mBlocked.
  * @param isActive if true, the loader is activated
  **/
-void DkImageLoader::activate(bool isActive /* = true */)
+void DkImageLoader::activate(bool isActive /* = true */, bool clearImages)
 {
     if (!isActive) {
         // go to sleep - schlofand wöhlar ihr camölar
         blockSignals(true);
-        clearPath();
+        clearPath(clearImages);
     } else if (!mCurrentImage) {
         // wake up again
         blockSignals(false);
