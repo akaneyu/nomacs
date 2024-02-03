@@ -108,11 +108,15 @@ public:
     TabMode getMode() const;
     void setMode(int mode);
 
+    int getScrollValueSaved() const;
+    void setScrollValueSaved(int value);
+
 protected:
     QSharedPointer<DkImageLoader> mImageLoader;
     int mTabIdx = 0;
     enum TabMode mTabMode = tab_recent_files;
     QString mFilePath = "";
+    int mScrollValueSaved = 0;
 };
 
 class DkViewPort;
@@ -182,6 +186,7 @@ public slots:
     void showProgress(bool show, int time = -1);
     void startSlideshow(bool start = true) const;
     void setInfo(const QString &msg) const;
+    void thumbViewScrollChanged(int value);
 
 protected:
     QTabBar *mTabbar = 0;
@@ -190,6 +195,8 @@ protected:
 
     QVector<QWidget *> mWidgets;
     QStackedLayout *mViewLayout = 0;
+
+    bool thumbViewScrollChangeBlocked = false;
 
     void dropEvent(QDropEvent *event) override;
     void dragEnterEvent(QDragEnterEvent *event) override;

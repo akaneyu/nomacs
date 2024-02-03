@@ -60,6 +60,7 @@
 #include <QStackedLayout>
 #include <QStandardPaths>
 #include <QTabBar>
+#include <QScrollBar>
 #pragma warning(pop) // no warnings from includes - end
 
 namespace nmc
@@ -263,6 +264,16 @@ void DkTabInfo::setMode(int mode)
 {
     if (mode < TabMode::tab_end)
         mTabMode = static_cast<enum TabMode>(mode);
+}
+
+int DkTabInfo::getScrollValueSaved() const
+{
+    return mScrollValueSaved;
+}
+
+void DkTabInfo::setScrollValueSaved(int value)
+{
+    mScrollValueSaved = value;
 }
 
 // DkCenteralWidget --------------------------------------------------------------------
@@ -616,6 +627,8 @@ DkThumbScrollWidget *DkCentralWidget::createThumbScrollWidget()
     // thumbnail preview widget
     connect(thumbScrollWidget->getThumbWidget(), SIGNAL(loadFileSignal(const QString &, bool)), this, SLOT(loadFile(const QString &, bool)));
     connect(thumbScrollWidget, SIGNAL(batchProcessFilesSignal(const QStringList &)), this, SLOT(openBatch(const QStringList &)));
+    connect(thumbScrollWidget->getView()->verticalScrollBar(), SIGNAL(valueChanged(int)),
+            this, SLOT(thumbViewScrollChanged(int)));
 
     return thumbScrollWidget;
 }
@@ -842,8 +855,16 @@ void DkCentralWidget::showThumbView(bool show)
 
         // should be definitely true
         if (auto tw = getThumbScrollWidget()) {
+            thumbViewScrollChangeBlocked = true;
             tw->updateThumbs(tabInfo->getImageLoader()->getImages());
+            thumbViewScrollChangeBlocked = false;
+
             tw->getThumbWidget()->setImageLoader(tabInfo->getImageLoader());
+
+            // restore the scroll bar position
+            thumbViewScrollChangeBlocked = true;
+            tw->getView()->verticalScrollBar()->setValue(tabInfo->getScrollValueSaved());
+            thumbViewScrollChangeBlocked = false;
 
             if (tabInfo->getImage())
                 tw->getThumbWidget()->ensureVisible(tabInfo->getImage());
@@ -1008,9 +1029,15 @@ void DkCentralWidget::switchWidget(QWidget *widget)
     if (mViewLayout->currentWidget() == widget && mTabInfos[mTabbar->currentIndex()]->getMode() != DkTabInfo::tab_empty)
         return;
 
-    if (widget)
-        mViewLayout->setCurrentWidget(widget);
-    else
+    if (widget) {
+        if (widget == mWidgets[thumbs_widget]) {
+            thumbViewScrollChangeBlocked = true;
+            mViewLayout->setCurrentWidget(widget);
+            thumbViewScrollChangeBlocked = false;
+        } else {
+            mViewLayout->setCurrentWidget(widget);
+        }
+    } else
         mViewLayout->setCurrentWidget(mWidgets[viewport_widget]);
 
     if (!mTabInfos.isEmpty()) {
@@ -1073,6 +1100,18 @@ void DkCentralWidget::setInfo(const QString &msg) const
         getViewPort()->getController()->setInfo(msg);
 
     qInfo() << msg;
+}
+
+void DkCentralWidget::thumbViewScrollChanged(int value)
+{
+    if (thumbViewScrollChangeBlocked) {
+        return;
+    }
+
+    // save the scroll bar position
+    if (!mTabInfos.empty()) {
+        mTabInfos[mTabbar->currentIndex()]->setScrollValueSaved(value);
+    }
 }
 
 QSharedPointer<DkImageContainerT> DkCentralWidget::getCurrentImage() const
@@ -1192,11 +1231,15 @@ void DkCentralWidget::loadDirToTab(const QString &dirPath)
     }
 
     QSharedPointer<DkTabInfo> targetTab = mTabInfos[mTabbar->currentIndex()];
+    targetTab->setScrollValueSaved(0);
+
     QFileInfo di(dirPath);
 
     if (di.isDir()) {
         // try to load the dir
+        thumbViewScrollChangeBlocked = true;
         bool dirIsLoaded = targetTab->setDirPath(dirPath);
+        thumbViewScrollChangeBlocked = false;
 
         if (dirIsLoaded) {
             // show the directory in overview mode

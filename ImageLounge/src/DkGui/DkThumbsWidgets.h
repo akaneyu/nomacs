@@ -326,6 +326,11 @@ public:
         return mThumbsScene;
     };
 
+    DkThumbsView *getView()
+    {
+        return mView;
+    };
+
     void clear();
 
 public slots:
