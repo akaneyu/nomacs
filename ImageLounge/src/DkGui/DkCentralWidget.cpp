@@ -232,7 +232,7 @@ QString DkTabInfo::getTabText() const
     QString tabText(QObject::tr("New Tab"));
 
     if (mTabMode == tab_thumb_preview)
-        return QObject::tr("Thumbnail Preview");
+        return QFileInfo(mImageLoader->getDirPath()).fileName();    // use dir name
     else if (mTabMode == tab_recent_files)
         return QObject::tr("Recent Files");
     else if (mTabMode == tab_preferences)
@@ -1234,6 +1234,9 @@ void DkCentralWidget::loadDirToTab(const QString &dirPath)
         thumbViewScrollChangeBlocked = false;
 
         if (dirIsLoaded) {
+            // apply dir name to the tab
+            updateTab(targetTab);
+
             // show the directory in overview mode
             targetTab->setMode(DkTabInfo::tab_thumb_preview);
             showThumbView();
