@@ -175,7 +175,6 @@ public slots:
     void pasteImage();
     void loadFileToTab(const QString &filePath);
     void loadFile(const QString &filePath, bool newTab = false);
-    void loadDir(const QString &filePath);
     void loadDirToTab(const QString &dirPath);
     void loadUrl(const QUrl &urls, bool newTab = false);
     void loadUrls(const QList<QUrl> &urls, const int maxUrlsToLoad = 20);

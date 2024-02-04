@@ -1171,17 +1171,6 @@ void DkCentralWidget::dragEnterEvent(QDragEnterEvent *event)
     QWidget::dragEnterEvent(event);
 }
 
-void DkCentralWidget::loadDir(const QString &filePath)
-{
-    if (mTabInfos[mTabbar->currentIndex()]->getMode() == DkTabInfo::tab_thumb_preview && getThumbScrollWidget())
-        getThumbScrollWidget()->setDir(filePath);
-    else {
-        if (!hasViewPort())
-            createViewPort();
-        getViewPort()->loadFile(filePath);
-    }
-}
-
 void DkCentralWidget::loadFileToTab(const QString &filePath)
 {
     loadFile(filePath, true);
