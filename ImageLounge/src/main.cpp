@@ -292,6 +292,11 @@ int main(int argc, char *argv[])
             cw->addTab(filePath);
     }
 
+    // the first tab is redundant if additional tabs are added
+    if (loading && cw->getTabs().size() > 1) {
+        cw->removeTab(0);
+    }
+
     // load recent files if there is nothing to display
     if (!loading && nmc::DkSettingsManager::param().app().showRecentFiles) {
         w->showRecentFilesOnStartUp();
