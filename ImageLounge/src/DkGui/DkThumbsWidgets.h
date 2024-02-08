@@ -61,6 +61,7 @@ namespace nmc
 
 // nomacs defines
 class DkImageLoader;
+class DkSubFolderContainer;
 
 class DkFilePreview : public DkFadeWidget
 {
@@ -191,13 +192,18 @@ class DkThumbLabel : public QGraphicsObject
 
 public:
     DkThumbLabel(QSharedPointer<DkThumbNailT> thumb = QSharedPointer<DkThumbNailT>(), QGraphicsItem *parent = 0);
+    DkThumbLabel(const QString &dirPath,
+            const QVector<QSharedPointer<DkThumbNailT>> &fileThumbs,
+            QGraphicsItem *parent = 0);
     ~DkThumbLabel();
 
     void setThumb(QSharedPointer<DkThumbNailT> thumb);
     QSharedPointer<DkThumbNailT> getThumb()
     {
         return mThumb;
-    };
+    }
+    bool isFolder() const;
+    QString getDirPath() const;
     QRectF boundingRect() const override;
     QPainterPath shape() const override;
     void updateSize();
@@ -207,9 +213,11 @@ public:
 
 public slots:
     void updateLabel();
+    void updateFolderLabel();
 
 signals:
     void loadFileSignal(const QString &filePath, bool newTab) const;
+    void loadDirSignal(const QString &filePath) const;
     void showFileSignal(const QString &filePath = QString()) const;
 
 protected:
@@ -229,6 +237,10 @@ protected:
     QBrush mSelectBrush;
     bool mIsHovered = false;
     QPointF mLastMove;
+    bool mIsFolder = false;
+    QString mDirPath;
+    QStringList mFilePaths;
+    QVector<QSharedPointer<DkThumbNailT>> mFileThumbs;
 };
 
 class DllCoreExport DkThumbScene : public QGraphicsScene
@@ -248,6 +260,7 @@ public:
     int findThumb(DkThumbLabel *thumb) const;
     bool allThumbsSelected() const;
     void ensureVisible(QSharedPointer<DkImageContainerT> img) const;
+    void ensureVisible(QSharedPointer<DkSubFolderContainer> subFolderContainer) const;
     QString currentDir() const;
 
 public slots:
@@ -270,6 +283,7 @@ public slots:
 
 signals:
     void loadFileSignal(const QString &filePath, bool newTab) const;
+    void loadDirSignal(const QString &filePath) const;
     void statusInfoSignal(const QString &msg, int pos = 0) const;
     void thumbLoadedSignal() const;
 
@@ -285,6 +299,7 @@ protected:
     QVector<DkThumbLabel *> mThumbLabels;
     QSharedPointer<DkImageLoader> mLoader;
     QVector<QSharedPointer<DkImageContainerT>> mThumbs;
+    QVector<QSharedPointer<DkSubFolderContainer>> mSubFolderContainers;
 };
 
 class DkThumbsView : public QGraphicsView

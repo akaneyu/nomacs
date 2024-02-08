@@ -104,6 +104,27 @@
 
 namespace nmc
 {
+// DkSubFolderContainer --------------------------------------------------------------------
+
+DkSubFolderContainer::DkSubFolderContainer(const QString &dirPath)
+{
+    mDirPath = dirPath;
+}
+
+QString DkSubFolderContainer::dirPath() const
+{
+    return mDirPath;
+}
+
+QVector<QSharedPointer<DkImageContainerT>> DkSubFolderContainer::getImages()
+{
+    return mImages;
+}
+
+void DkSubFolderContainer::addImage(QSharedPointer<DkImageContainerT> img)
+{
+    mImages.append(img);
+}
 
 // DkImageLoader -> is nomacs file handling routine --------------------------------------------------------------------
 /**
@@ -138,8 +159,9 @@ DkImageLoader::DkImageLoader(const QString &filePath)
 
     if (fInfo.exists())
         loadDir(fInfo.absolutePath());
-    else
-        mCurrentDir = DkSettingsManager::param().global().lastDir;
+    // NOTE: the last dir is not being used as expected 
+    // else
+    //     mCurrentDir = DkSettingsManager::param().global().lastDir;
 }
 
 /**
@@ -266,7 +288,7 @@ bool DkImageLoader::loadDir(const QString &newDirPath, bool scanRecursive)
         qDebug() << "getting file list.....";
     }
     // new folder is loaded
-    else if ((newDirPath != mCurrentDir || mImages.empty()) && !newDirPath.isEmpty() && QDir(newDirPath).exists()) {
+    else if (newDirPath != mCurrentDir && !newDirPath.isEmpty() && QDir(newDirPath).exists()) {
         QFileInfoList files;
 
         // newDir.setNameFilters(DkSettingsManager::param().app().fileFilters);
@@ -285,6 +307,9 @@ bool DkImageLoader::loadDir(const QString &newDirPath, bool scanRecursive)
                                             mIgnoreKeywords,
                                             mKeywords,
                                             mFolderFilterString); // this line takes seconds if you have lots of files and slow loading (e.g. network)
+
+        // collect subfolders and sample images in them
+        updateSubFolderContainers();
 
         if (files.empty()) {
             emit showInfoSignal(tr("%1 \n does not contain any image").arg(mCurrentDir), 4000); // stop showing
@@ -659,6 +684,11 @@ void DkImageLoader::setImages(QVector<QSharedPointer<DkImageContainerT>> images)
 {
     mImages = images;
     emit updateDirSignal(images);
+}
+
+QVector<QSharedPointer<DkSubFolderContainer>> &DkImageLoader::getSubFolderContainers()
+{
+    return mSubFolderContainers;
 }
 
 /**
@@ -1635,6 +1665,57 @@ QFileInfoList DkImageLoader::updateSubFolders(const QString &rootDirPath)
     }
 
     return files;
+}
+
+void DkImageLoader::updateSubFolderContainers()
+{
+    mSubFolderContainers.clear();
+
+    QStringList subFolders;
+    QDirIterator dirs(mCurrentDir, QDir::Dirs | QDir::NoDotAndDotDot | QDir::NoSymLinks);
+
+    // collect subfolders
+    while (dirs.hasNext()) {
+        dirs.next();
+        subFolders << dirs.filePath();
+    }
+
+    std::sort(subFolders.begin(), subFolders.end(), DkUtils::compLogicQString);
+
+    for (const QString &subFolder : subFolders) {
+        auto subFolderContainer = QSharedPointer<DkSubFolderContainer>(
+                new DkSubFolderContainer(subFolder));
+
+        QStringList filePaths;
+        QDirIterator files(subFolder, DkSettingsManager::param().app().browseFilters,
+                QDir::Files);
+
+        // get first 16 images
+        for (int cnt = 0; cnt < 16 && files.hasNext(); cnt++) {
+            files.next();
+            filePaths << files.filePath();
+        }
+
+        int maxSamples = 4;
+        int numFiles = filePaths.size();
+
+        // pick up 4 images with a gap in between them
+        if (numFiles <= maxSamples) {
+            for (int idx = 0; idx < numFiles; idx++) {
+                subFolderContainer->addImage(QSharedPointer<DkImageContainerT>(
+                        new DkImageContainerT(filePaths.at(idx))));
+            }
+        } else {
+            for (int cnt = 0; cnt < maxSamples; cnt++) {
+                auto idx = std::min((int) std::round(numFiles / (maxSamples - 1) * cnt),
+                        numFiles - 1);
+                subFolderContainer->addImage(QSharedPointer<DkImageContainerT>(
+                        new DkImageContainerT(filePaths.at(idx))));
+            }
+        }
+
+        mSubFolderContainers << subFolderContainer;
+    }
 }
 
 void DkImageLoader::errorDialog(const QString &msg) const

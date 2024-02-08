@@ -56,6 +56,20 @@ class QUrl;
 namespace nmc
 {
 
+class DllCoreExport DkSubFolderContainer
+{
+public:
+    DkSubFolderContainer(const QString &dirPath);
+
+    QString dirPath() const;
+    QVector<QSharedPointer<DkImageContainerT>> getImages();
+    void addImage(QSharedPointer<DkImageContainerT> img);
+
+protected:
+    QString mDirPath;
+    QVector<QSharedPointer<DkImageContainerT>> mImages;
+};
+
 /**
  * This class is a basic image loader class.
  * It takes care of the file watches for the current folder,
@@ -78,6 +92,7 @@ public:
                                           QStringList ignoreKeywords = QStringList(),
                                           QStringList keywords = QStringList(),
                                           QString folderKeywords = QString());
+    void updateSubFolderContainers();
 
     QSharedPointer<DkImageContainerT> getCurrentImage() const;
     QSharedPointer<DkImageContainerT> getLastImage() const;
@@ -91,6 +106,7 @@ public:
     void setImageUpdated();
     void setCurrentImage(QSharedPointer<DkImageContainerT> newImg);
     void sort();
+    QVector<QSharedPointer<DkSubFolderContainer>> &getSubFolderContainers();
 
     // file selection
     void firstFile();
@@ -206,6 +222,7 @@ protected:
     QVector<QSharedPointer<DkImageContainerT>> mImages;
     QSharedPointer<DkImageContainerT> mCurrentImage;
     QSharedPointer<DkImageContainerT> mLastImageLoaded;
+    QVector<QSharedPointer<DkSubFolderContainer>> mSubFolderContainers;
     bool mFolderUpdated = false;
     int mTmpFileIdx = 0;
     bool mSortingImages = false;

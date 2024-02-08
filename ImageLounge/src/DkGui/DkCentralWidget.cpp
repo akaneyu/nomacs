@@ -629,6 +629,7 @@ DkThumbScrollWidget *DkCentralWidget::createThumbScrollWidget()
 
     // thumbnail preview widget
     connect(thumbScrollWidget->getThumbWidget(), SIGNAL(loadFileSignal(const QString &, bool)), this, SLOT(loadFile(const QString &, bool)));
+    connect(thumbScrollWidget->getThumbWidget(), SIGNAL(loadDirSignal(const QString &)), this, SLOT(loadDirToTab(const QString &)));
     connect(thumbScrollWidget, SIGNAL(batchProcessFilesSignal(const QStringList &)), this, SLOT(openBatch(const QStringList &)));
     connect(thumbScrollWidget->getView()->verticalScrollBar(), SIGNAL(valueChanged(int)),
             this, SLOT(thumbViewScrollChanged(int)));
@@ -858,11 +859,11 @@ void DkCentralWidget::showThumbView(bool show)
 
         // should be definitely true
         if (auto tw = getThumbScrollWidget()) {
+            tw->getThumbWidget()->setImageLoader(tabInfo->getImageLoader());
+
             thumbViewScrollChangeBlocked = true;
             tw->updateThumbs(tabInfo->getImageLoader()->getImages());
             thumbViewScrollChangeBlocked = false;
-
-            tw->getThumbWidget()->setImageLoader(tabInfo->getImageLoader());
 
             // restore the scroll bar position
             thumbViewScrollChangeBlocked = true;
@@ -1230,18 +1231,16 @@ void DkCentralWidget::loadDirToTab(const QString &dirPath)
     if (di.isDir()) {
         // try to load the dir
         thumbViewScrollChangeBlocked = true;
-        bool dirIsLoaded = targetTab->setDirPath(dirPath);
+        targetTab->setDirPath(dirPath);
         thumbViewScrollChangeBlocked = false;
 
-        if (dirIsLoaded) {
-            // apply dir name to the tab
-            updateTab(targetTab);
+        // apply dir name to the tab
+        updateTab(targetTab);
 
-            // show the directory in overview mode
-            targetTab->setMode(DkTabInfo::tab_thumb_preview);
-            showThumbView();
-            return;
-        }
+        // show the directory in overview mode
+        targetTab->setMode(DkTabInfo::tab_thumb_preview);
+        showThumbView();
+        return;
     }
 
     setInfo(tr("I could not load \"%1\"").arg(dirPath));
