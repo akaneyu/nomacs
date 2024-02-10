@@ -228,6 +228,7 @@ protected:
 
     QSharedPointer<DkThumbNailT> mThumb;
     QGraphicsPixmapItem mIcon;
+    QGraphicsPixmapItem mCaptionIcon;
     QGraphicsTextItem mText;
     bool mThumbInitialized = false;
     bool mFetchingThumb = false;

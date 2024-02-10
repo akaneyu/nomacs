@@ -833,6 +833,7 @@ void DkFilePreview::setVisible(bool visible, bool saveSettings)
 DkThumbLabel::DkThumbLabel(QSharedPointer<DkThumbNailT> thumb, QGraphicsItem *parent)
     : QGraphicsObject(parent)
     , mText(this)
+    , mCaptionIcon(this)
 {
     mThumbInitialized = false;
     mFetchingThumb = false;
@@ -932,12 +933,16 @@ void DkThumbLabel::updateLabel()
         pm.fill(Qt::transparent);
 
         QPainter painter(&pm);
-        int painterSize = painter.device()->width();
-        int gap = painterSize * 0.01;
-        int fileThumbSize = (painterSize - gap) / 2;
+        int gap = (int)(thumbSize * 0.01);
+        int fileThumbSize = (thumbSize - gap) / 2;
 
-        // draw sample thumbnails in the folder
+        // place sample thumbnails in the folder
         for (int idx = 0; idx < 4; idx++) {
+            painter.fillRect(
+                    (fileThumbSize + gap) * (idx % 2),
+                    (fileThumbSize + gap) * int(idx / 2),
+                    fileThumbSize, fileThumbSize, QColor(255, 255, 255, 128));
+
             if (idx < mFileThumbs.size()) {
                 auto fileThumb = mFileThumbs.at(idx);
                 if (!fileThumb->getImage().isNull()) {
@@ -947,19 +952,15 @@ void DkThumbLabel::updateLabel()
                             (fileThumbSize + gap) * (idx % 2),
                             (fileThumbSize + gap) * int(idx / 2),
                             fileThumbSize, fileThumbSize, filePm);
-                } else {
-                    painter.fillRect(
-                            (fileThumbSize + gap) * (idx % 2),
-                            (fileThumbSize + gap) * int(idx / 2),
-                            fileThumbSize, fileThumbSize, Qt::black);
                 }
-            } else {
-                painter.fillRect(
-                        (fileThumbSize + gap) * (idx % 2),
-                        (fileThumbSize + gap) * int(idx / 2),
-                        fileThumbSize, fileThumbSize, Qt::black);
             }
         }
+
+        // place subfolder icon
+        QPixmap overlayPm = DkImage::colorizePixmap(
+                QIcon(":/nomacs/img/subfolder-thumb.svg").pixmap(QSize(thumbSize, thumbSize)),
+                QColor(255, 255, 255, 128));
+        painter.drawPixmap(0, 0, thumbSize, thumbSize, overlayPm);
     } else if (!mThumb.isNull()) {
         if (!mThumb->getImage().isNull()) {
             pm = QPixmap::fromImage(mThumb->getImage());
@@ -978,6 +979,13 @@ void DkThumbLabel::updateLabel()
     }
     if (pm.isNull())
         setFlag(ItemIsSelectable, false); // if we cannot load it -> disable selection
+
+    // update caption icon
+    if (mIsFolder) {
+        mCaptionIcon.setPixmap(DkImage::loadIcon(":/nomacs/img/thumb-caption-subfolder.svg",
+                Qt::white, QSize(0, 0)));
+    }
+    mCaptionIcon.hide();
 
     // update label
     mText.setPos(0, pm.height());
@@ -1133,7 +1141,24 @@ void DkThumbLabel::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
         painter->setWorldTransform(tt);
         painter->setBrush(DkSettingsManager::param().display().hudBgColor);
         painter->drawRect(r);
-        mText.paint(painter, &noSelOption, widget);
+
+        // draw icon and caption
+        if (mIsFolder) {
+            mCaptionIcon.paint(painter, &noSelOption, widget);
+
+            tt.translate(mCaptionIcon.boundingRect().width(), 0);
+            painter->setWorldTransform(tt);
+
+            painter->setClipRect(QRectF(0, 0,
+                    r.width() - mCaptionIcon.boundingRect().width(), r.height()));
+            mText.paint(painter, &noSelOption, widget);
+            painter->setClipping(false);
+
+        // draw caption only
+        } else {
+            mText.paint(painter, &noSelOption, widget);
+        }
+
         painter->setWorldTransform(mt);
     }
 
