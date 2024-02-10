@@ -862,6 +862,7 @@ void DkCentralWidget::showThumbView(bool show)
             tw->getThumbWidget()->setImageLoader(tabInfo->getImageLoader());
 
             thumbViewScrollChangeBlocked = true;
+            tw->setSubFolderContainers(tabInfo->getImageLoader()->getSubFolderContainers());
             tw->updateThumbs(tabInfo->getImageLoader()->getImages());
             thumbViewScrollChangeBlocked = false;
 

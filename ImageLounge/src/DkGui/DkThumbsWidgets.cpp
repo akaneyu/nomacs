@@ -1235,6 +1235,12 @@ void DkThumbScene::updateLayout()
     mFirstLayout = false;
 }
 
+void DkThumbScene::setSubFolderContainers(
+        QVector<QSharedPointer<DkSubFolderContainer>> subFolderContainers)
+{
+    mSubFolderContainers = subFolderContainers;
+}
+
 void DkThumbScene::updateThumbs(QVector<QSharedPointer<DkImageContainerT>> thumbs)
 {
     this->mThumbs = thumbs;
@@ -1292,8 +1298,6 @@ void DkThumbScene::setImageLoader(QSharedPointer<DkImageLoader> loader)
     connectLoader(mLoader, false); // disconnect
     mLoader = loader;
     connectLoader(loader);
-
-    mSubFolderContainers = mLoader->getSubFolderContainers();
 }
 
 void DkThumbScene::connectLoader(QSharedPointer<DkImageLoader> loader, bool connectSignals)
@@ -2058,6 +2062,12 @@ void DkThumbScrollWidget::on_loadFile_triggered()
     }
 }
 
+void DkThumbScrollWidget::setSubFolderContainers(
+        QVector<QSharedPointer<DkSubFolderContainer>> subFolderContainers)
+{
+    mThumbsScene->setSubFolderContainers(subFolderContainers);
+}
+
 void DkThumbScrollWidget::updateThumbs(QVector<QSharedPointer<DkImageContainerT>> thumbs)
 {
     mThumbsScene->updateThumbs(thumbs);
@@ -2065,6 +2075,7 @@ void DkThumbScrollWidget::updateThumbs(QVector<QSharedPointer<DkImageContainerT>
 
 void DkThumbScrollWidget::clear()
 {
+    mThumbsScene->setSubFolderContainers(QVector<QSharedPointer<DkSubFolderContainer>>());
     mThumbsScene->updateThumbs(QVector<QSharedPointer<DkImageContainerT>>());
 }
 

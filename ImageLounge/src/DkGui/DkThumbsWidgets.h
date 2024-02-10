@@ -276,6 +276,7 @@ public slots:
     void selectThumbs(bool select = true, int from = 0, int to = -1);
     void selectThumb(int idx, bool select = true);
     void selectAllThumbs(bool select = true);
+    void setSubFolderContainers(QVector<QSharedPointer<DkSubFolderContainer>> subFolderContainers);
     void updateThumbs(QVector<QSharedPointer<DkImageContainerT>> thumbs);
     void deleteSelected() const;
     void copySelected() const;
@@ -351,6 +352,7 @@ public:
 
 public slots:
     virtual void setVisible(bool visible) override;
+    void setSubFolderContainers(QVector<QSharedPointer<DkSubFolderContainer>> subFolderContainers);
     void updateThumbs(QVector<QSharedPointer<DkImageContainerT>> thumbs);
     void setDir(const QString &dirPath);
     void enableSelectionActions();
