@@ -269,6 +269,11 @@ bool DkImageLoader::loadDir(const QString &newDirPath, bool scanRecursive)
                                             mKeywords,
                                             mFolderFilterString); // this line takes seconds if you have lots of files and slow loading (e.g. network)
 
+        // collect subfolders and sample images in them
+        if (DkSettingsManager::param().display().showSubFolderThumbs) {
+            updateSubFolderContainers();
+        }
+
         // might get empty too (e.g. someone deletes all images)
         if (files.empty()) {
             emit showInfoSignal(tr("%1 \n does not contain any image").arg(newDirPath), 4000); // stop showing
@@ -309,7 +314,9 @@ bool DkImageLoader::loadDir(const QString &newDirPath, bool scanRecursive)
                                             mFolderFilterString); // this line takes seconds if you have lots of files and slow loading (e.g. network)
 
         // collect subfolders and sample images in them
-        updateSubFolderContainers();
+        if (DkSettingsManager::param().display().showSubFolderThumbs) {
+            updateSubFolderContainers();
+        }
 
         if (files.empty()) {
             emit showInfoSignal(tr("%1 \n does not contain any image").arg(mCurrentDir), 4000); // stop showing

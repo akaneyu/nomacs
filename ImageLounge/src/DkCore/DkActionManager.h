@@ -306,6 +306,7 @@ public:
         preview_select_all,
         preview_zoom_in,
         preview_zoom_out,
+        preview_show_sub_folder_thumbs,
         preview_display_squares,
         preview_show_labels,
         preview_copy,

@@ -1255,8 +1255,8 @@ void DkThumbScene::updateThumbLabels()
 
     mThumbLabels.clear();
 
-    if (mLoader) {
-        // add subfolder thumbnails
+    // add subfolder thumbnails
+    if (DkSettingsManager::param().display().showSubFolderThumbs && mLoader) {
         for (auto subFolderContainer : mSubFolderContainers) {
             QVector<QSharedPointer<DkThumbNailT>> fileThumbs;
 
@@ -1412,6 +1412,19 @@ int DkThumbScene::selectedThumbIndex(bool first)
     }
 
     return selIdx;
+}
+
+void DkThumbScene::toggleSubFolderThumbs(bool show)
+{
+    DkSettingsManager::param().display().showSubFolderThumbs = show;
+
+    // load subfolders
+    if (mLoader) {
+        mLoader->directoryChanged(mLoader->getDirPath());
+        setSubFolderContainers(mLoader->getSubFolderContainers());
+    }
+
+    updateThumbLabels();
 }
 
 void DkThumbScene::toggleThumbLabels(bool show)
@@ -1956,6 +1969,7 @@ void DkThumbScrollWidget::createToolbar()
     DkActionManager &am = DkActionManager::instance();
     mToolbar->addAction(am.action(DkActionManager::preview_zoom_in));
     mToolbar->addAction(am.action(DkActionManager::preview_zoom_out));
+    mToolbar->addAction(am.action(DkActionManager::preview_show_sub_folder_thumbs));
     mToolbar->addAction(am.action(DkActionManager::preview_display_squares));
     mToolbar->addAction(am.action(DkActionManager::preview_show_labels));
     mToolbar->addSeparator();
@@ -2108,6 +2122,7 @@ void DkThumbScrollWidget::connectToActions(bool activate)
         connect(am.action(DkActionManager::preview_select_all), SIGNAL(triggered(bool)), mThumbsScene, SLOT(selectAllThumbs(bool)));
         connect(am.action(DkActionManager::preview_zoom_in), SIGNAL(triggered()), mThumbsScene, SLOT(increaseThumbs()));
         connect(am.action(DkActionManager::preview_zoom_out), SIGNAL(triggered()), mThumbsScene, SLOT(decreaseThumbs()));
+        connect(am.action(DkActionManager::preview_show_sub_folder_thumbs), SIGNAL(triggered(bool)), mThumbsScene, SLOT(toggleSubFolderThumbs(bool)));
         connect(am.action(DkActionManager::preview_display_squares), SIGNAL(triggered(bool)), mThumbsScene, SLOT(toggleSquaredThumbs(bool)));
         connect(am.action(DkActionManager::preview_show_labels), SIGNAL(triggered(bool)), mThumbsScene, SLOT(toggleThumbLabels(bool)));
         connect(am.action(DkActionManager::preview_filter), SIGNAL(triggered()), this, SLOT(setFilterFocus()));
@@ -2125,6 +2140,7 @@ void DkThumbScrollWidget::connectToActions(bool activate)
         disconnect(am.action(DkActionManager::preview_select_all), SIGNAL(triggered(bool)), mThumbsScene, SLOT(selectAllThumbs(bool)));
         disconnect(am.action(DkActionManager::preview_zoom_in), SIGNAL(triggered()), mThumbsScene, SLOT(increaseThumbs()));
         disconnect(am.action(DkActionManager::preview_zoom_out), SIGNAL(triggered()), mThumbsScene, SLOT(decreaseThumbs()));
+        disconnect(am.action(DkActionManager::preview_show_sub_folder_thumbs), SIGNAL(triggered(bool)), mThumbsScene, SLOT(toggleSubFolderThumbs(bool)));
         disconnect(am.action(DkActionManager::preview_display_squares), SIGNAL(triggered(bool)), mThumbsScene, SLOT(toggleSquaredThumbs(bool)));
         disconnect(am.action(DkActionManager::preview_show_labels), SIGNAL(triggered(bool)), mThumbsScene, SLOT(toggleThumbLabels(bool)));
         disconnect(am.action(DkActionManager::preview_filter), SIGNAL(triggered()), this, SLOT(setFilterFocus()));

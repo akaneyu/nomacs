@@ -440,6 +440,7 @@ void DkSettings::load(QSettings &settings, bool defaults)
     display_p.showNavigation = settings.value("showNavigation", display_p.showNavigation).toBool();
     display_p.themeName = settings.value("themeName312", display_p.themeName).toString();
     display_p.showBorder = settings.value("showBorder", display_p.showBorder).toBool();
+    display_p.showSubFolderThumbs = settings.value("showSubFolderThumbs", display_p.showSubFolderThumbs).toBool();
     display_p.displaySquaredThumbs = settings.value("displaySquaredThumbs", display_p.displaySquaredThumbs).toBool();
     display_p.showThumbLabel = settings.value("showThumbLabel", display_p.showThumbLabel).toBool();
     display_p.showScrollBars = settings.value("showScrollBars", display_p.showScrollBars).toBool();
@@ -697,6 +698,8 @@ void DkSettings::save(QSettings &settings, bool force)
         settings.setValue("themeName312", display_p.themeName);
     if (force || display_p.showBorder != display_d.showBorder)
         settings.setValue("showBorder", display_p.showBorder);
+    if (force || display_p.showSubFolderThumbs != display_d.showSubFolderThumbs)
+        settings.setValue("showSubFolderThumbs", display_p.showSubFolderThumbs);
     if (force || display_p.displaySquaredThumbs != display_d.displaySquaredThumbs)
         settings.setValue("displaySquaredThumbs", display_p.displaySquaredThumbs);
     if (force || display_p.showThumbLabel != display_d.showThumbLabel)
@@ -896,6 +899,7 @@ void DkSettings::setToDefaultSettings()
     display_p.showNavigation = true;
     display_p.themeName = "Light-Theme.css";
     display_p.showBorder = false;
+    display_p.showSubFolderThumbs = true;
     display_p.displaySquaredThumbs = true;
     display_p.showThumbLabel = false;
     display_p.showScrollBars = false;

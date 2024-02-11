@@ -1505,6 +1505,10 @@ void DkActionManager::createActions(QWidget *parent)
     mPreviewActions[preview_zoom_out] = new QAction(DkImage::loadIcon(":/nomacs/img/zoom-out.svg"), QObject::tr("Zoom &Out"), parent);
     mPreviewActions[preview_zoom_out]->setShortcut(QKeySequence::ZoomOut);
 
+    mPreviewActions[preview_show_sub_folder_thumbs] = new QAction(DkImage::loadIcon(":/nomacs/img/dir.svg"), QObject::tr("Show Subfolder Thumbnails"), parent);
+    mPreviewActions[preview_show_sub_folder_thumbs]->setCheckable(true);
+    mPreviewActions[preview_show_sub_folder_thumbs]->setChecked(DkSettingsManager::param().display().showSubFolderThumbs);
+
     mPreviewActions[preview_display_squares] = new QAction(DkImage::loadIcon(":/nomacs/img/rects.svg"), QObject::tr("Display &Squares"), parent);
     mPreviewActions[preview_display_squares]->setCheckable(true);
     mPreviewActions[preview_display_squares]->setChecked(DkSettingsManager::param().display().displaySquaredThumbs);

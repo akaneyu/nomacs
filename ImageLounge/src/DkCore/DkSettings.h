@@ -238,6 +238,7 @@ public:
         bool antiAliasing;
         bool highQualityAntiAliasing;
         bool showBorder;
+        bool showSubFolderThumbs;
         bool displaySquaredThumbs;
         bool showThumbLabel;
         bool showScrollBars;

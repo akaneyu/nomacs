@@ -269,6 +269,7 @@ public slots:
     void cancelLoading();
     void increaseThumbs();
     void decreaseThumbs();
+    void toggleSubFolderThumbs(bool show);
     void toggleSquaredThumbs(bool squares);
     void toggleThumbLabels(bool show);
     void resizeThumbs(float dx);
