@@ -163,7 +163,7 @@ public slots:
     void setTabList(QVector<QSharedPointer<DkTabInfo>> tabInfos, int activeIndex = -1);
     void addTab(QSharedPointer<DkImageContainerT> imgC = QSharedPointer<DkImageContainerT>(), int tabIdx = -1, bool background = false);
     void addTab(const QString &filePath, int idx = -1, bool background = false);
-    void addTab(const QSharedPointer<DkTabInfo> tabInfo, bool background = false);
+    void addTab(const QSharedPointer<DkTabInfo> tabInfo, int idx = -1, bool background = false);
     void removeTab(int tabIdx = -1);
     void nextTab() const;
     void previousTab() const;
@@ -191,6 +191,7 @@ protected:
     QTabBar *mTabbar = 0;
     DkProgressBar *mProgressBar = 0;
     QVector<QSharedPointer<DkTabInfo>> mTabInfos;
+    QSharedPointer<DkTabInfo> mTabSpawnedFrom;
 
     QVector<QWidget *> mWidgets;
     QStackedLayout *mViewLayout = 0;

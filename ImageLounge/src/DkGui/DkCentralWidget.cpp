@@ -441,6 +441,9 @@ DkThumbScrollWidget *DkCentralWidget::getThumbScrollWidget() const
 
 void DkCentralWidget::currentTabChanged(int idx)
 {
+    // forget the tab that opened another one
+    mTabSpawnedFrom.clear();
+
     if (idx < 0 || idx >= mTabInfos.size())
         return;
 
@@ -707,13 +710,25 @@ void DkCentralWidget::addTab(QSharedPointer<DkImageContainerT> imgC, int idx /* 
         idx = mTabInfos.size();
 
     QSharedPointer<DkTabInfo> tabInfo = QSharedPointer<DkTabInfo>(new DkTabInfo(imgC, idx));
-    addTab(tabInfo, background);
+    addTab(tabInfo, idx, background);
 }
 
-void DkCentralWidget::addTab(QSharedPointer<DkTabInfo> tabInfo, bool background)
+void DkCentralWidget::addTab(QSharedPointer<DkTabInfo> tabInfo, int idx /* = -1 */, bool background)
 {
-    mTabInfos.push_back(tabInfo);
-    mTabbar->addTab(tabInfo->getTabText());
+    QSharedPointer<DkTabInfo> tabSpawnedFrom;
+    if (mTabInfos.size() > 0) {
+        tabSpawnedFrom = mTabInfos.at(mTabbar->currentIndex());
+    }
+
+    if (idx == -1) {
+        mTabInfos.push_back(tabInfo);
+        mTabbar->addTab(tabInfo->getTabText());
+    } else {
+        mTabInfos.insert(idx, tabInfo);
+        mTabbar->insertTab(idx, tabInfo->getTabText());
+        updateTabIdx();
+    }
+
     mTabbar->setTabIcon(tabInfo->getTabIdx(), tabInfo->getIcon());
 
     if (!background)
@@ -721,6 +736,11 @@ void DkCentralWidget::addTab(QSharedPointer<DkTabInfo> tabInfo, bool background)
 
     if (mTabInfos.size() > 1)
         mTabbar->show();
+
+    // remember the tab that opened this one
+    if (!tabSpawnedFrom.isNull()) {
+        mTabSpawnedFrom = tabSpawnedFrom;
+    }
 
     // TODO: add a plus button
     //// Create button what must be placed in tabs row
@@ -747,6 +767,12 @@ void DkCentralWidget::removeTab(int tabIdx)
             bw->close();
     }
 
+    // forget the tab that opened another one
+    if (mTabInfos[tabIdx] == mTabSpawnedFrom) {
+        mTabSpawnedFrom.clear();
+    }
+
+    QSharedPointer<DkTabInfo> tabSpawnedFrom = mTabSpawnedFrom;
     mTabInfos.remove(tabIdx);
     updateTabIdx();
     mTabbar->removeTab(tabIdx);
@@ -754,6 +780,12 @@ void DkCentralWidget::removeTab(int tabIdx)
 
     // NOTE: this causes the existing tab to be replaced with a random widget
     //switchWidget(mTabbar->currentIndex());
+
+    // return to the tab that opened this one
+    if (!tabSpawnedFrom.isNull()) {
+        mTabbar->setCurrentIndex(tabSpawnedFrom->getTabIdx());
+        mTabSpawnedFrom.clear();
+    }
 
     if (mTabInfos.size() == 0) { // Make sure we have at least one tab
         addTab();
@@ -1208,7 +1240,7 @@ void DkCentralWidget::loadFile(const QString &filePath, bool newTab)
     }
 
     // no tab to reuse -> create a new tab ... and activate it
-    addTab(filePath, -1 /*, mTabInfos.size() > 0*/);
+    addTab(filePath, mTabbar->currentIndex() + 1);
 }
 
 /**
@@ -1221,7 +1253,7 @@ void DkCentralWidget::loadDirToTab(const QString &dirPath)
     //     || (!mTabInfos.empty() && mTabInfos.at(0)->getMode() != DkTabInfo::tab_empty && mTabInfos.at(0)->getMode() != DkTabInfo::tab_recent_files
     //         && mTabInfos.at(0)->getMode() != DkTabInfo::tab_single_image && mTabInfos.at(0)->getMode() != DkTabInfo::tab_thumb_preview)) {
     if (DkSettingsManager::param().global().openFileInNewTab) {
-        addTab();
+        addTab(QSharedPointer<DkImageContainerT>(), mTabbar->currentIndex() + 1);
     }
 
     QSharedPointer<DkTabInfo> targetTab = mTabInfos[mTabbar->currentIndex()];
