@@ -260,6 +260,7 @@ public:
     void copyImages(const QMimeData *mimeData, const Qt::DropAction &da = Qt::CopyAction) const;
     int findThumb(DkThumbLabel *thumb) const;
     bool allThumbsSelected() const;
+    bool isFolderSelected() const;
     void ensureVisible(QSharedPointer<DkImageContainerT> img) const;
     void ensureVisible(QSharedPointer<DkSubFolderContainer> subFolderContainer) const;
     QString currentDir() const;

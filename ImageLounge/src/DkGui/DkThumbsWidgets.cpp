@@ -1705,9 +1705,7 @@ QStringList DkThumbScene::getSelectedFiles() const
 
     for (int idx = 0; idx < mThumbLabels.size(); idx++) {
         if (mThumbLabels.at(idx) && mThumbLabels.at(idx)->isSelected()) {
-            if (mThumbLabels.at(idx)->getThumb().isNull()) {
-                fileList.append(mThumbLabels.at(idx)->getDirPath());
-            } else {
+            if (!mThumbLabels.at(idx)->isFolder()) {
                 fileList.append(mThumbLabels.at(idx)->getThumb()->getFilePath());
             }
         }
@@ -1749,6 +1747,17 @@ bool DkThumbScene::allThumbsSelected() const
             return false;
 
     return true;
+}
+
+bool DkThumbScene::isFolderSelected() const
+{
+    for (DkThumbLabel *label : mThumbLabels) {
+        if (label->isSelected() && label->isFolder()) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 // DkThumbView --------------------------------------------------------------------
@@ -2180,7 +2189,8 @@ void DkThumbScrollWidget::contextMenuEvent(QContextMenuEvent *event)
 
 void DkThumbScrollWidget::enableSelectionActions()
 {
-    bool enable = !mThumbsScene->getSelectedFiles().isEmpty();
+    // disabled when folders are selected
+    bool enable = !mThumbsScene->getSelectedFiles().isEmpty() && !mThumbsScene->isFolderSelected();
 
     DkActionManager &am = DkActionManager::instance();
     am.action(DkActionManager::preview_copy)->setEnabled(enable);
