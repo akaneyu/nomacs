@@ -191,7 +191,6 @@ protected:
     QTabBar *mTabbar = 0;
     DkProgressBar *mProgressBar = 0;
     QVector<QSharedPointer<DkTabInfo>> mTabInfos;
-    QSharedPointer<DkTabInfo> mTabSpawnedFrom;
 
     QVector<QWidget *> mWidgets;
     QStackedLayout *mViewLayout = 0;

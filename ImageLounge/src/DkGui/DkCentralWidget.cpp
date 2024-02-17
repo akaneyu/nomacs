@@ -335,6 +335,7 @@ void DkCentralWidget::createLayout()
     mTabbar->setUsesScrollButtons(true);
     mTabbar->setTabsClosable(true);
     mTabbar->setMovable(true);
+    mTabbar->setSelectionBehaviorOnRemove(QTabBar::SelectPreviousTab);
     mTabbar->installEventFilter(new TabMiddleMouseCloser([this](int idx) {
         removeTab(idx);
     }));
@@ -441,9 +442,6 @@ DkThumbScrollWidget *DkCentralWidget::getThumbScrollWidget() const
 
 void DkCentralWidget::currentTabChanged(int idx)
 {
-    // forget the tab that opened another one
-    mTabSpawnedFrom.clear();
-
     if (idx < 0 || idx >= mTabInfos.size())
         return;
 
@@ -717,11 +715,6 @@ void DkCentralWidget::addTab(QSharedPointer<DkImageContainerT> imgC, int idx /* 
 
 void DkCentralWidget::addTab(QSharedPointer<DkTabInfo> tabInfo, int idx /* = -1 */, bool background)
 {
-    QSharedPointer<DkTabInfo> tabSpawnedFrom;
-    if (mTabInfos.size() > 0) {
-        tabSpawnedFrom = mTabInfos.at(mTabbar->currentIndex());
-    }
-
     if (idx == -1) {
         mTabInfos.push_back(tabInfo);
         mTabbar->addTab(tabInfo->getTabText());
@@ -738,11 +731,6 @@ void DkCentralWidget::addTab(QSharedPointer<DkTabInfo> tabInfo, int idx /* = -1 
 
     if (mTabInfos.size() > 1)
         mTabbar->show();
-
-    // remember the tab that opened this one
-    if (!tabSpawnedFrom.isNull()) {
-        mTabSpawnedFrom = tabSpawnedFrom;
-    }
 
     // TODO: add a plus button
     //// Create button what must be placed in tabs row
@@ -769,12 +757,6 @@ void DkCentralWidget::removeTab(int tabIdx)
             bw->close();
     }
 
-    // forget the tab that opened another one
-    if (mTabInfos[tabIdx] == mTabSpawnedFrom) {
-        mTabSpawnedFrom.clear();
-    }
-
-    QSharedPointer<DkTabInfo> tabSpawnedFrom = mTabSpawnedFrom;
     mTabInfos.remove(tabIdx);
     updateTabIdx();
     mTabbar->removeTab(tabIdx);
@@ -782,12 +764,6 @@ void DkCentralWidget::removeTab(int tabIdx)
 
     // NOTE: this causes the existing tab to be replaced with a random widget
     //switchWidget(mTabbar->currentIndex());
-
-    // return to the tab that opened this one
-    if (!tabSpawnedFrom.isNull()) {
-        mTabbar->setCurrentIndex(tabSpawnedFrom->getTabIdx());
-        mTabSpawnedFrom.clear();
-    }
 
     if (mTabInfos.size() == 0) { // Make sure we have at least one tab
         addTab();
