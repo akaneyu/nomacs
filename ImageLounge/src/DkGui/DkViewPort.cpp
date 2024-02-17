@@ -1869,6 +1869,11 @@ QSharedPointer<DkImageContainerT> DkViewPort::imageContainer() const
     return mLoader->getCurrentImage();
 }
 
+QSharedPointer<DkImageLoader> DkViewPort::getLoader()
+{
+    return mLoader;
+}
+
 void DkViewPort::setImageLoader(QSharedPointer<DkImageLoader> newLoader)
 {
     mLoader = newLoader;
@@ -1954,17 +1959,8 @@ void DkViewPort::connectLoader(QSharedPointer<DkImageLoader> loader, bool connec
                    SIGNAL(imageUpdatedSignal(QSharedPointer<DkImageContainerT>)),
                    mController->getFilePreview(),
                    SLOT(setFileInfo(QSharedPointer<DkImageContainerT>)));
-        disconnect(loader.data(),
-                   SIGNAL(imageUpdatedSignal(QSharedPointer<DkImageContainerT>)),
-                   mController->getMetaDataWidget(),
-                   SLOT(updateMetaData(QSharedPointer<DkImageContainerT>)));
-        disconnect(loader.data(),
-                   SIGNAL(imageUpdatedSignal(QSharedPointer<DkImageContainerT>)),
-                   mController,
-                   SLOT(setFileInfo(QSharedPointer<DkImageContainerT>)));
 
         disconnect(loader.data(), SIGNAL(showInfoSignal(const QString &, int, int)), mController, SLOT(setInfo(const QString &, int, int)));
-        disconnect(loader.data(), SIGNAL(updateSpinnerSignalDelayed(bool, int)), mController, SLOT(setSpinnerDelayed(bool, int)));
 
         disconnect(loader.data(), SIGNAL(setPlayer(bool)), mController->getPlayer(), SLOT(play(bool)));
 
@@ -1972,10 +1968,8 @@ void DkViewPort::connectLoader(QSharedPointer<DkImageLoader> loader, bool connec
                    SIGNAL(updateDirSignal(QVector<QSharedPointer<DkImageContainerT>>)),
                    mController->getScroller(),
                    SLOT(updateDir(QVector<QSharedPointer<DkImageContainerT>>)));
-        disconnect(loader.data(),
-                   SIGNAL(imageUpdatedSignal(QSharedPointer<DkImageContainerT>)),
-                   mController->getScroller(),
-                   SLOT(updateFile(QSharedPointer<DkImageContainerT>)));
+        disconnect(loader.data(), SIGNAL(imageUpdatedSignal(int)), mController->getScroller(), SLOT(updateFile(int)));
+        disconnect(mController->getScroller(), SIGNAL(valueChanged(int)), loader.data(), SLOT(loadFileAt(int)));
     }
 }
 

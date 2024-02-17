@@ -1201,6 +1201,10 @@ void DkThumbScene::updateLayout()
     mNumCols = qMin(mThumbLabels.size(), mNumCols);
     mNumRows = qCeil((float)mThumbLabels.size() / mNumCols);
 
+    // reset the scroll bar position before changing the scene rect
+    // (it could be unintentionally adjusted by Qt)
+    views().at(0)->verticalScrollBar()->setValue(0);
+
     int tso = psz + mXOffset;
     setSceneRect(0, 0, mNumCols * tso + mXOffset, mNumRows * tso + mXOffset);
 

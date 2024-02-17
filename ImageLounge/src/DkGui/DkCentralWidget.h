@@ -93,8 +93,8 @@ public:
 
     QSharedPointer<DkImageLoader> getImageLoader() const;
 
-    void deactivate(bool clearImages = true);
-    void activate(bool isActive = true, bool clearImages = true);
+    void deactivate();
+    void activate(bool isActive = true);
 
     int getTabIdx() const;
     void setTabIdx(int idx);

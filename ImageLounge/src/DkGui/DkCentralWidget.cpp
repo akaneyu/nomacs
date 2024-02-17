@@ -179,15 +179,15 @@ QSharedPointer<DkImageLoader> DkTabInfo::getImageLoader() const
     return mImageLoader;
 }
 
-void DkTabInfo::deactivate(bool clearImages)
+void DkTabInfo::deactivate()
 {
-    activate(false, clearImages);
+    activate(false);
 }
 
-void DkTabInfo::activate(bool isActive, bool clearImages)
+void DkTabInfo::activate(bool isActive)
 {
     if (mImageLoader)
-        mImageLoader->activate(isActive, clearImages);
+        mImageLoader->activate(isActive);
 }
 
 QSharedPointer<DkImageContainerT> DkTabInfo::getImage() const
@@ -475,9 +475,11 @@ void DkCentralWidget::updateLoader(QSharedPointer<DkImageLoader> loader) const
         QSharedPointer<DkImageLoader> l = mTabInfos.at(tIdx)->getImageLoader();
 
         if (l != loader) {
-            // do not clear images in a directory for thumbnails tab
-            bool clearImages = mTabInfos.at(tIdx)->getMode() != DkTabInfo::tab_thumb_preview;
-            mTabInfos.at(tIdx)->deactivate(clearImages);
+            mTabInfos.at(tIdx)->deactivate();
+
+            if (hasViewPort() && getViewPort()->getLoader() == l) {
+                getViewPort()->connectLoader(l, false);     // disconnect
+            }
         }
 
         disconnect(loader.data(), SIGNAL(imageUpdatedSignal(QSharedPointer<DkImageContainerT>)), this, SLOT(imageLoaded(QSharedPointer<DkImageContainerT>)));
