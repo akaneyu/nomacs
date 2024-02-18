@@ -27,8 +27,11 @@
 
 #pragma once
 
+#include "DkQt5Compat.h"
+
 #pragma warning(push, 0) // no warnings from includes - begin
 #include <QDockWidget>
+#include <QFileIconProvider>
 #include <QFileSystemModel>
 #include <QFutureWatcher>
 #include <QLineEdit>
@@ -95,7 +98,7 @@ protected:
     void paintEvent(QPaintEvent *event) override;
     void focusInEvent(QFocusEvent *event) override;
     void focusOutEvent(QFocusEvent *event) override;
-    void enterEvent(QEvent *event);
+    void enterEvent(DkEnterEvent *event) override;
     void leaveEvent(QEvent *event) override;
     QPixmap createSelectedEffect(QPixmap *pm);
 };
@@ -379,6 +382,9 @@ class DkFileSystemModel : public QFileSystemModel
 
 public:
     DkFileSystemModel(QObject *parent = 0);
+
+protected:
+    QFileIconProvider *mIconProvider = nullptr;
 };
 
 class DkSortFileProxyModel : public QSortFilterProxyModel
@@ -562,7 +568,7 @@ protected:
     void mousePressEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
-    void enterEvent(QEvent *event);
+    void enterEvent(DkEnterEvent *event) override;
     void init();
 
     DkRotatingRect *rect;

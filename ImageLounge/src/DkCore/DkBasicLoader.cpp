@@ -1780,7 +1780,9 @@ void FileDownloader::fileDownloaded(QNetworkReply *pReply)
     // ok save it
     else {
         connect(&mSaveWatcher, SIGNAL(finished()), this, SLOT(saved()), Qt::UniqueConnection);
-        mSaveWatcher.setFuture(QtConcurrent::run(&nmc::FileDownloader::save, mFilePath, mDownloadedData));
+        mSaveWatcher.setFuture(QtConcurrent::run([&] {
+            return save(mFilePath, mDownloadedData);
+        }));
     }
 }
 

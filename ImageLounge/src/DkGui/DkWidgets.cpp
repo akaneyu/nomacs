@@ -353,6 +353,9 @@ DkFileSystemModel::DkFileSystemModel(QObject *parent /* = 0 */)
     setRootPath(QDir::rootPath());
     setNameFilters(DkSettingsManager::param().app().fileFilters);
     setReadOnly(false);
+
+    mIconProvider = new QFileIconProvider();
+    setIconProvider(mIconProvider);
 }
 
 // DkSortFileProxyModel --------------------------------------------------------------------
@@ -1079,7 +1082,7 @@ void DkButton::focusOutEvent(QFocusEvent *)
     mouseOver = false;
 }
 
-void DkButton::enterEvent(QEvent *)
+void DkButton::enterEvent(DkEnterEvent *)
 {
     mouseOver = true;
 }
@@ -1604,7 +1607,7 @@ void DkTransformRect::mouseReleaseEvent(QMouseEvent *event)
     QWidget::mouseReleaseEvent(event);
 }
 
-void DkTransformRect::enterEvent(QEvent *)
+void DkTransformRect::enterEvent(DkEnterEvent *)
 {
     if (rect)
         setCursor(rect->cpCursor(parentIdx));

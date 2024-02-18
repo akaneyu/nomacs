@@ -363,7 +363,7 @@ protected:
     void loadSettings();
     void saveSettings();
     QImage resizeImg(QImage img, bool silent = true);
-    void resizeEvent(QResizeEvent *re);
+    void resizeEvent(QResizeEvent *re) override;
 };
 
 class DkShortcutDelegate : public QItemDelegate

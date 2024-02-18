@@ -48,7 +48,6 @@
 #include <QAction>
 #include <QApplication>
 #include <QClipboard>
-#include <QDesktopWidget>
 #include <QDrag>
 #include <QDragLeaveEvent>
 #include <QInputDialog>
@@ -920,7 +919,9 @@ void DkViewPort::applyManipulator()
     } else
         img = getImage();
 
-    mManipulatorWatcher.setFuture(QtConcurrent::run(mpl.data(), &nmc::DkBaseManipulator::apply, img));
+    mManipulatorWatcher.setFuture(QtConcurrent::run([mpl, img] {
+        return mpl.data()->apply(img);
+    }));
 
     mActiveManipulator = mpl;
 
@@ -1317,11 +1318,16 @@ void DkViewPort::mouseMoveEvent(QMouseEvent *event)
 
 void DkViewPort::wheelEvent(QWheelEvent *event)
 {
-    if ((!DkSettingsManager::param().global().zoomOnWheel && event->modifiers() != mCtrlMod)
-        || (DkSettingsManager::param().global().zoomOnWheel
-            && (event->modifiers() & mCtrlMod
-                || (DkSettingsManager::param().global().horZoomSkips && event->orientation() == Qt::Horizontal && !(event->modifiers() & mAltMod))))) {
-        auto delta = event->angleDelta().y();
+    auto ctrlMod = DkSettingsManager::param().global().ctrlMod;
+    if ((!DkSettingsManager::param().global().zoomOnWheel && event->modifiers() != ctrlMod)
+        || (DkSettingsManager::param().global().zoomOnWheel && (event->modifiers() & ctrlMod))) {
+        auto delta = 0;
+
+        if (DkSettingsManager::param().global().horZoomSkips) {
+            delta = event->angleDelta().x();
+        } else {
+            delta = event->angleDelta().y();
+        }
         if (delta < 0)
             loadNextFileFast();
         if (delta > 0)

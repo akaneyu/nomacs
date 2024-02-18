@@ -535,8 +535,9 @@ bool DkUtils::exists(const QFileInfo &file, int waitMs)
         // - create a dedicated pool for exists
         // - create a dedicated pool for image loading
         DkThumbsThreadPool::pool(), // hook it to the thumbs pool
-        &DkUtils::checkFile,
-        file);
+        [file] {
+            return DkUtils::checkFile(file);
+        });
 
     for (int idx = 0; idx < waitMs; idx++) {
         if (future.isFinished())
@@ -959,11 +960,11 @@ DkFileNameConverter::DkFileNameConverter(const QString &fileName, const QString 
 QString DkFileNameConverter::getConvertedFileName()
 {
     QString newFileName = mPattern;
-    QRegExp rx("<.*>");
-    rx.setMinimal(true);
+    QRegularExpression rx("<.*>");
+    QRegularExpressionMatch match = rx.match(newFileName);
 
-    while (rx.indexIn(newFileName) != -1) {
-        QString tag = rx.cap();
+    while (match.hasMatch()) {
+        QString tag = match.captured();
         QString res = "";
 
         if (tag.contains("<c:"))
@@ -975,6 +976,7 @@ QString DkFileNameConverter::getConvertedFileName()
 
         // replace() replaces all matches - so if two tags are the very same, we save a little computing
         newFileName = newFileName.replace(tag, res);
+        match = rx.match(newFileName);
     }
 
     return newFileName;
