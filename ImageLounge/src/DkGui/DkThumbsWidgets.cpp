@@ -1002,6 +1002,9 @@ void DkThumbLabel::updateLabel()
     }
     mText.hide();
 
+    QRectF r = mText.boundingRect();
+    mCaptionIcon.setScale(r.height() / DkSettingsManager::param().effectiveIconSize());
+
     prepareGeometryChange();
     updateSize();
 }
@@ -1144,9 +1147,13 @@ void DkThumbLabel::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 
         // draw icon and caption
         if (mIsFolder) {
+            QTransform cit = tt;
+            cit.scale(mCaptionIcon.scale(), mCaptionIcon.scale());
+
+            painter->setTransform(cit);
             mCaptionIcon.paint(painter, &noSelOption, widget);
 
-            tt.translate(mCaptionIcon.boundingRect().width(), 0);
+            tt.translate(mCaptionIcon.boundingRect().width() * mCaptionIcon.scale(), 0);
             painter->setWorldTransform(tt);
 
             painter->setClipRect(QRectF(0, 0,
