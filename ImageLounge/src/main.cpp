@@ -25,6 +25,20 @@
 
  *******************************************************************************************************/
 
+#pragma warning(push, 0) // no warnings from includes - begin
+#include <QApplication>
+#include <QCommandLineParser>
+#include <QDebug>
+#include <QDesktopServices>
+#include <QDir>
+#include <QFileInfo>
+#include <QMessageBox>
+#include <QObject>
+#include <QProcess>
+#include <QTextStream>
+#include <QTranslator>
+#pragma warning(pop) // no warnings from includes - end
+
 #ifdef Q_OS_WIN
 #include "shlwapi.h"
 #pragma comment(lib, "shlwapi.lib")
@@ -39,20 +53,6 @@
 #ifdef QT_NO_DEBUG_OUTPUT
 #pragma warning(disable : 4127) // no 'conditional expression is constant' if qDebug() messages are removed
 #endif
-
-#pragma warning(push, 0) // no warnings from includes - begin
-#include <QApplication>
-#include <QCommandLineParser>
-#include <QDebug>
-#include <QDesktopServices>
-#include <QDir>
-#include <QFileInfo>
-#include <QMessageBox>
-#include <QObject>
-#include <QProcess>
-#include <QTextStream>
-#include <QTranslator>
-#pragma warning(pop) // no warnings from includes - end
 
 #include "DkCentralWidget.h"
 #include "DkNoMacs.h"
