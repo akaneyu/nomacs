@@ -422,7 +422,6 @@ void DkUnsharpMaskWidget::createLayout()
     DkSlider *sigmaSlider = new DkSlider(tr("Sigma"), this);
     sigmaSlider->setObjectName("sigmaSlider");
     sigmaSlider->setValue(manipulator()->sigma());
-    // darkenSlider->hide();
 
     DkSlider *amountSlider = new DkSlider(tr("Amount"), this);
     amountSlider->setObjectName("amountSlider");

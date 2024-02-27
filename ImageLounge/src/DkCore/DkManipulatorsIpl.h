@@ -220,7 +220,7 @@ public:
 
 private:
     int mSigmaDefault = 30;
-    int mAmountDefault = 15;
+    int mAmountDefault = 5;
 
     int mSigma = mSigmaDefault;
     int mAmount = mAmountDefault;

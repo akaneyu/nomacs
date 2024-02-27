@@ -319,7 +319,7 @@ DkUnsharpMaskManipulator::DkUnsharpMaskManipulator(QAction *action)
 QImage DkUnsharpMaskManipulator::apply(const QImage &img) const
 {
     QImage imgC = img.copy();
-    DkImage::unsharpMask(imgC, (float)sigma(), 1.0f + amount() / 100.0f);
+    DkImage::unsharpMask(imgC, sigma() / 10.0f, 1.0f + amount() / 10.0f);
     return imgC;
 }
 
