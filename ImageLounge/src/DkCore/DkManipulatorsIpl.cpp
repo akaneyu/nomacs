@@ -514,7 +514,7 @@ DkHueManipulator::DkHueManipulator(QAction *action)
 
 QImage DkHueManipulator::apply(const QImage &img) const
 {
-    return DkImage::hueSaturation(img, hue(), saturation(), value());
+    return DkImage::hueSaturation(img, hue(), saturation(), lightness());
 }
 
 QString DkHueManipulator::errorMessage() const
@@ -526,7 +526,7 @@ void DkHueManipulator::applyDefault()
 {
     mHue = mHueDefault;
     mSat = mSatDefault;
-    mValue = mValueDefault;
+    mLightness = mLightnessDefault;
 }
 
 void DkHueManipulator::setHue(int hue)
@@ -557,18 +557,18 @@ int DkHueManipulator::saturation() const
     return mSat;
 }
 
-void DkHueManipulator::setValue(int val)
+void DkHueManipulator::setLightness(int lightness)
 {
-    if (mValue == val)
+    if (mLightness == lightness)
         return;
 
-    mValue = val;
+    mLightness = lightness;
     action()->trigger();
 }
 
-int DkHueManipulator::value() const
+int DkHueManipulator::lightness() const
 {
-    return mValue;
+    return mLightness;
 }
 
 DkExposureManipulator::DkExposureManipulator(QAction *action)

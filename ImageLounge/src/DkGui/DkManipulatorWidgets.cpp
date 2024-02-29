@@ -723,10 +723,10 @@ void DkHueWidget::applyDefault()
     satSlider->setValue(manipulator()->saturation());
     satSlider->blockSignals(false);
 
-    DkSlider *brightnessSlider = findChild<DkSlider *>("brightnessSlider");
-    brightnessSlider->blockSignals(true);
-    brightnessSlider->setValue(manipulator()->value());
-    brightnessSlider->blockSignals(false);
+    DkSlider *lightnessSlider = findChild<DkSlider *>("lightnessSlider");
+    lightnessSlider->blockSignals(true);
+    lightnessSlider->setValue(manipulator()->lightness());
+    lightnessSlider->blockSignals(false);
 }
 
 void DkHueWidget::createLayout()
@@ -745,17 +745,17 @@ void DkHueWidget::createLayout()
     satSlider->setMinimum(-100);
     satSlider->setMaximum(100);
 
-    DkSlider *brightnessSlider = new DkSlider(tr("Brightness"), this);
-    brightnessSlider->setObjectName("brightnessSlider");
-    brightnessSlider->getSlider()->setObjectName("DkBrightnessSlider");
-    brightnessSlider->setValue(manipulator()->value());
-    brightnessSlider->setMinimum(-100);
-    brightnessSlider->setMaximum(100);
+    DkSlider *lightnessSlider = new DkSlider(tr("Lightness"), this);
+    lightnessSlider->setObjectName("lightnessSlider");
+    lightnessSlider->getSlider()->setObjectName("DkLightnessSlider");
+    lightnessSlider->setValue(manipulator()->lightness());
+    lightnessSlider->setMinimum(-100);
+    lightnessSlider->setMaximum(100);
 
     QVBoxLayout *sliderLayout = new QVBoxLayout(this);
     sliderLayout->addWidget(hueSlider);
     sliderLayout->addWidget(satSlider);
-    sliderLayout->addWidget(brightnessSlider);
+    sliderLayout->addWidget(lightnessSlider);
 }
 
 void DkHueWidget::on_hueSlider_valueChanged(int val)
@@ -768,9 +768,9 @@ void DkHueWidget::on_satSlider_valueChanged(int val)
     manipulator()->setSaturation(val);
 }
 
-void DkHueWidget::on_brightnessSlider_valueChanged(int val)
+void DkHueWidget::on_lightnessSlider_valueChanged(int val)
 {
-    manipulator()->setValue(val);
+    manipulator()->setLightness(val);
 }
 
 // DkExposureWidget --------------------------------------------------------------------

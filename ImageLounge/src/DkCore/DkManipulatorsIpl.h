@@ -314,17 +314,17 @@ public:
     void setSaturation(int sat);
     int saturation() const;
 
-    void setValue(int val);
-    int value() const;
+    void setLightness(int lightness);
+    int lightness() const;
 
 private:
     int mHueDefault = 0;
     int mSatDefault = 0;
-    int mValueDefault = 0;
+    int mLightnessDefault = 0;
 
     int mHue = mHueDefault;
     int mSat = mSatDefault;
-    int mValue = mValueDefault;
+    int mLightness = mLightnessDefault;
 };
 
 class DllCoreExport DkExposureManipulator : public DkBaseManipulatorExt

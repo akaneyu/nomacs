@@ -199,7 +199,7 @@ public:
 public slots:
     void on_hueSlider_valueChanged(int val);
     void on_satSlider_valueChanged(int val);
-    void on_brightnessSlider_valueChanged(int val);
+    void on_lightnessSlider_valueChanged(int val);
 
 private:
     void createLayout();

@@ -702,18 +702,18 @@ QImage DkImage::cropToImage(const QImage &src, const DkRotatingRect &rect, const
     return img;
 }
 
-QImage DkImage::hueSaturation(const QImage &src, int hue, int sat, int brightness)
+QImage DkImage::hueSaturation(const QImage &src, int hue, int sat, int lightness)
 {
     // nothing to do?
-    if (hue == 0 && sat == 0 && brightness == 0)
+    if (hue == 0 && sat == 0 && lightness == 0)
         return src;
 
     QImage imgR;
 
 #ifdef WITH_OPENCV
 
-    // normalize brightness/saturation
-    int brightnessN = qRound(brightness / 100.0 * 255.0);
+    // normalize lightness/saturation
+    double lightnessN = lightness / 100.0 + 1.0;
     double satN = sat / 100.0 + 1.0;
 
     cv::Mat hsvImg = DkImage::qImage2Mat(src);
@@ -721,7 +721,7 @@ QImage DkImage::hueSaturation(const QImage &src, int hue, int sat, int brightnes
     if (hsvImg.channels() > 3)
         cv::cvtColor(hsvImg, hsvImg, CV_RGBA2BGR);
 
-    cv::cvtColor(hsvImg, hsvImg, CV_BGR2HSV);
+    cv::cvtColor(hsvImg, hsvImg, CV_BGR2HLS);
 
     // apply hue/saturation changes
     for (int rIdx = 0; rIdx < hsvImg.rows; rIdx++) {
@@ -737,25 +737,25 @@ QImage DkImage::hueSaturation(const QImage &src, int hue, int sat, int brightnes
 
             iPtr[cIdx] = (unsigned char)h;
 
-            // adopt value
-            int v = iPtr[cIdx + 2] + brightnessN;
+            // adopt lightness
+            int v = qRound(iPtr[cIdx + 1] * lightnessN);
             if (v < 0)
                 v = 0;
             if (v > 255)
                 v = 255;
-            iPtr[cIdx + 2] = (unsigned char)v;
+            iPtr[cIdx + 1] = (unsigned char)v;
 
             // adopt saturation
-            int s = qRound(iPtr[cIdx + 1] * satN);
+            int s = qRound(iPtr[cIdx + 2] * satN);
             if (s < 0)
                 s = 0;
             if (s > 255)
                 s = 255;
-            iPtr[cIdx + 1] = (unsigned char)s;
+            iPtr[cIdx + 2] = (unsigned char)s;
         }
     }
 
-    cv::cvtColor(hsvImg, hsvImg, CV_HSV2BGR);
+    cv::cvtColor(hsvImg, hsvImg, CV_HLS2BGR);
     imgR = DkImage::mat2QImage(hsvImg);
 
 #endif // WITH_OPENCV
