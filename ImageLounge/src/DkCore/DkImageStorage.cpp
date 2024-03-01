@@ -729,7 +729,8 @@ QImage DkImage::hueSaturation(const QImage &src, int hue, int sat, int lightness
 
         for (int cIdx = 0; cIdx < hsvImg.cols * 3; cIdx += 3) {
             // adopt hue
-            int h = iPtr[cIdx] + hue;
+            // NOTE: hue range is 0 to 180 (slider range is -180 to 180)
+            int h = iPtr[cIdx] + qRound(hue / 2.0);
             if (h < 0)
                 h += 180;
             if (h >= 180)
