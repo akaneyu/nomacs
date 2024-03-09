@@ -1005,6 +1005,17 @@ protected:
     void paintEvent(QPaintEvent *event) override;
 };
 
+class DllCoreExport DkToolButton : public QPushButton
+{
+    Q_OBJECT
+
+public:
+    DkToolButton(const QIcon &icon, const QString &text, QWidget *parent);
+
+protected:
+    void paintEvent(QPaintEvent *event) override;
+};
+
 class DllCoreExport DkDisplayWidget : public DkFadeWidget
 {
     Q_OBJECT

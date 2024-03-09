@@ -31,6 +31,7 @@
 #include "DkBasicLoader.h"
 #include "DkBasicWidgets.h"
 #include "DkImageStorage.h"
+#include "DkLayout.h"
 #include "DkManipulatorsIpl.h"
 #include "DkSettings.h"
 #include "DkTimer.h"
@@ -62,7 +63,7 @@ DkManipulatorWidget::DkManipulatorWidget(QWidget *parent)
     mWidgets << new DkColorWidget(am.manipulatorManager().manipulatorExt(DkManipulatorManager::m_color), this);
     mWidgets << new DkExposureWidget(am.manipulatorManager().manipulatorExt(DkManipulatorManager::m_exposure), this);
 
-    setObjectName("DkPreferenceTabs");
+    setObjectName("DkManipulatorWidget");
     createLayout();
 
     for (QWidget *w : mWidgets)
@@ -75,20 +76,24 @@ DkManipulatorWidget::DkManipulatorWidget(QWidget *parent)
 void DkManipulatorWidget::createLayout()
 {
     // actions
+    int aLayoutMargin = qRound(5 * DkSettingsManager::param().dpiScaleFactor());
     QWidget *actionWidget = new QWidget(this);
-    QVBoxLayout *aLayout = new QVBoxLayout(actionWidget);
+    DkFlowLayout *aLayout = new DkFlowLayout(actionWidget);
     aLayout->setAlignment(Qt::AlignTop);
-    aLayout->setContentsMargins(0, 0, 0, 0);
+    aLayout->setContentsMargins(aLayoutMargin, aLayoutMargin, aLayoutMargin, 0);
     aLayout->setSpacing(0);
 
     mTabGroup = new QButtonGroup(this);
+    int buttonSize = qRound(75 * DkSettingsManager::param().dpiScaleFactor());
 
     DkActionManager &am = DkActionManager::instance();
     // for (QAction* a : am.manipulatorActions()) {	// if you want to get all
     for (int idx = DkManipulatorManager::m_end; idx < DkManipulatorManager::m_ext_end; idx++) {
         auto mpl = am.manipulatorManager().manipulatorExt((DkManipulatorManager::ManipulatorExtId)idx);
 
-        DkTabEntryWidget *entry = new DkTabEntryWidget(mpl->action()->icon(), mpl->name(), this);
+        DkToolButton *entry = new DkToolButton(mpl->action()->icon(), mpl->name(), this);
+        entry->setMinimumSize(buttonSize, buttonSize);
+        entry->setMaximumSize(buttonSize, buttonSize);
         connect(entry, SIGNAL(clicked()), mpl->action(), SIGNAL(triggered()), Qt::UniqueConnection);
 
         aLayout->addWidget(entry);

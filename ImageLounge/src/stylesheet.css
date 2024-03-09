@@ -331,6 +331,7 @@ QPushButton#removeFileButton:hover {
  
 /* preferences */
 QScrollArea#DkPreferenceTabs,
+QWidget#DkManipulatorWidget,
 QWidget#DkPreferenceTabs,
 QWidget#DkBatchTabs {
 	background-color: #333;
@@ -351,6 +352,13 @@ nmc--DkBatchTabButton {
 	border: none;
 }
 
+nmc--DkToolButton {
+	color: #fff;
+	font: thin "Segoe UI";
+	font-size: 9pt;
+	border: none;
+}
+
 nmc--DkBatchTabButton {
 	min-width: 250px;
 	padding-bottom: 30px;
@@ -358,6 +366,8 @@ nmc--DkBatchTabButton {
 
 QPushButton#DkTabEntryWidget:hover,
 QPushButton#DkTabEntryWidget:checked:hover,
+nmc--DkToolButton:hover,
+nmc--DkToolButton:checked:hover,
 nmc--DkBatchTabButton:hover,
 nmc--DkBatchTabButton:checked:hover {
 	background-color: rgba(255, 255, 255, 30);
@@ -368,6 +378,12 @@ nmc--DkBatchTabButton:checked {
 	background-color: rgba(0, 0, 0, 80);
 	border: none;	/* clear border styles first */
 	border-left: 4px solid HIGHLIGHT_COLOR;
+}
+
+nmc--DkToolButton:checked {
+	background-color: rgba(0, 0, 0, 80);
+	border: none;	/* clear border styles first */
+	border-bottom: 4px solid HIGHLIGHT_COLOR;
 }
 
 QLabel#DkPreferenceTitle {

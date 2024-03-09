@@ -3013,6 +3013,61 @@ void DkTabEntryWidget::paintEvent(QPaintEvent *event)
     QPushButton::paintEvent(event);
 }
 
+// DkToolButton --------------------------------------------------------------------
+DkToolButton::DkToolButton(const QIcon &icon, const QString &text, QWidget *parent)
+    : QPushButton(text, parent)
+{
+    setObjectName("DkToolButton");
+
+    QPixmap pm = DkImage::colorizePixmap(icon.pixmap(100), QColor(255, 255, 255));
+    setIcon(pm);
+    setIconSize(pm.size());
+
+    setFlat(true);
+    setCheckable(true);
+}
+
+void DkToolButton::paintEvent(QPaintEvent *event)
+{
+    Q_UNUSED(event)
+
+    QStyleOption opt;
+    opt.initFrom(this);
+    QPainter p(this);
+    style()->drawPrimitive(QStyle::PE_Widget, &opt, &p, this);
+
+    QStyleOptionButton buttonOpt;
+    buttonOpt.initFrom(this);
+    if (isChecked()) {
+        buttonOpt.state |= QStyle::State_On;
+    }
+
+    // draw button face
+    style()->drawControl(QStyle::CE_PushButtonBevel, &buttonOpt, &p, this);
+
+    QTransform mt = p.worldTransform();
+
+    QTransform it = mt;
+    it.translate(0, 0);
+    p.setTransform(it);
+
+    QRect r = rect();
+    r.setHeight(height() / 2);
+
+    // draw icon
+    style()->drawItemPixmap(&p, r, Qt::AlignHCenter | Qt::AlignVCenter, icon().pixmap(100));
+
+    it = mt;
+    it.translate(0, height() / 2);
+    p.setTransform(it);
+
+    // draw text with wrap
+    style()->drawItemText(&p, r, Qt::AlignHCenter | Qt::AlignVCenter | Qt::TextWordWrap,
+            palette(), true, text());
+
+    p.setTransform(mt);
+}
+
 // -------------------------------------------------------------------- DkDisplayWidget
 DkDisplayWidget::DkDisplayWidget(QWidget *parent)
     : DkFadeWidget(parent)
