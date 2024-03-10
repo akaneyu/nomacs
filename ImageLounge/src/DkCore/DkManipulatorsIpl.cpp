@@ -670,4 +670,54 @@ QColor DkColorManipulator::color() const
     return mColor;
 }
 
+// DkBrightnessManipulator --------------------------------------------------------------------
+DkBrightnessManipulator::DkBrightnessManipulator(QAction *action)
+    : DkBaseManipulatorExt(action)
+{
+}
+
+QImage DkBrightnessManipulator::apply(const QImage &img) const
+{
+    return DkImage::brightnessContrast(img, brightness(), contrast());
+}
+
+QString DkBrightnessManipulator::errorMessage() const
+{
+    return QObject::tr("Cannot change Brightness/Contrast");
+}
+
+void DkBrightnessManipulator::applyDefault()
+{
+    mBrightness = mBrightnessDefault;
+    mContrast = mContrastDefault;
+}
+
+void DkBrightnessManipulator::setBrightness(int brightness)
+{
+    if (mBrightness == brightness)
+        return;
+
+    mBrightness = brightness;
+    action()->trigger();
+}
+
+int DkBrightnessManipulator::brightness() const
+{
+    return mBrightness;
+}
+
+void DkBrightnessManipulator::setContrast(int contrast)
+{
+    if (mContrast == contrast)
+        return;
+
+    mContrast = contrast;
+    action()->trigger();
+}
+
+int DkBrightnessManipulator::contrast() const
+{
+    return mContrast;
+}
+
 }

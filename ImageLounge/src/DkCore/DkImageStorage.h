@@ -129,6 +129,7 @@ public:
     static QImage hueSaturation(const QImage &src, int hue, int sat, int brightness);
     static QImage exposure(const QImage &src, double exposure, double offset, double gamma);
     static QImage bgColor(const QImage &src, const QColor &col);
+    static QImage brightnessContrast(const QImage &src, int brightness, int contrast);
     static QByteArray extractImageFromDataStream(const QByteArray &ba,
                                                  const QByteArray &beginSignature = "\xe2\x80\xb0PNG",
                                                  const QByteArray &endSignature = "END\xc2\xae\x42\x60\xe2\x80\x9a",

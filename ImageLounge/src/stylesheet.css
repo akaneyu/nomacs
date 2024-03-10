@@ -517,7 +517,7 @@ nmc--DkBaseManipulatorWidget#darkManipulator {
 }
 
 /* DkManipulationWidget */
-nmc--DkBaseManipulatorWidget#darkManipulator QSlider#DkBrightnessSlider::groove:horizontal {
+nmc--DkBaseManipulatorWidget#darkManipulator QSlider#DkLightnessSlider::groove:horizontal {
 	background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #3c3c3c, stop:1 #c8c8c8);
 }
 

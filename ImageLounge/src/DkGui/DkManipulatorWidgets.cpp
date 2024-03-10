@@ -62,6 +62,7 @@ DkManipulatorWidget::DkManipulatorWidget(QWidget *parent)
     mWidgets << new DkHueWidget(am.manipulatorManager().manipulatorExt(DkManipulatorManager::m_hue), this);
     mWidgets << new DkColorWidget(am.manipulatorManager().manipulatorExt(DkManipulatorManager::m_color), this);
     mWidgets << new DkExposureWidget(am.manipulatorManager().manipulatorExt(DkManipulatorManager::m_exposure), this);
+    mWidgets << new DkBrightnessWidget(am.manipulatorManager().manipulatorExt(DkManipulatorManager::m_brightness), this);
 
     setObjectName("DkManipulatorWidget");
     createLayout();
@@ -860,6 +861,67 @@ void DkExposureWidget::on_offsetSlider_valueChanged(double val)
 void DkExposureWidget::on_gammaSlider_valueChanged(double val)
 {
     manipulator()->setGamma(val);
+}
+
+// DkBrightnessWidget --------------------------------------------------------------------
+DkBrightnessWidget::DkBrightnessWidget(QSharedPointer<DkBaseManipulatorExt> manipulator, QWidget *parent)
+    : DkBaseManipulatorWidget(manipulator, parent)
+{
+    createLayout();
+    QMetaObject::connectSlotsByName(this);
+
+    manipulator->setWidget(this);
+}
+
+QSharedPointer<DkBrightnessManipulator> DkBrightnessWidget::manipulator() const
+{
+    return qSharedPointerDynamicCast<DkBrightnessManipulator>(baseManipulator());
+}
+
+void DkBrightnessWidget::applyDefault()
+{
+    manipulator()->applyDefault();
+
+    DkSlider *brightnessSlider = findChild<DkSlider *>("brightnessSlider");
+    brightnessSlider->blockSignals(true);
+    brightnessSlider->setValue(manipulator()->brightness());
+    brightnessSlider->blockSignals(false);
+
+    DkSlider *contrastSlider = findChild<DkSlider *>("contrastSlider");
+    contrastSlider->blockSignals(true);
+    contrastSlider->setValue(manipulator()->contrast());
+    contrastSlider->blockSignals(false);
+}
+
+void DkBrightnessWidget::createLayout()
+{
+    DkSlider *brightnessSlider = new DkSlider(tr("Brightness"), this);
+    brightnessSlider->setObjectName("brightnessSlider");
+    brightnessSlider->getSlider()->setObjectName("DkBrightnessSlider");
+    brightnessSlider->setValue(manipulator()->brightness());
+    brightnessSlider->setMinimum(-100);
+    brightnessSlider->setMaximum(100);
+
+    DkSlider *contrastSlider = new DkSlider(tr("Contrast"), this);
+    contrastSlider->setObjectName("contrastSlider");
+    contrastSlider->getSlider()->setObjectName("DkContrastSlider");
+    contrastSlider->setValue(manipulator()->contrast());
+    contrastSlider->setMinimum(-100);
+    contrastSlider->setMaximum(100);
+
+    QVBoxLayout *sliderLayout = new QVBoxLayout(this);
+    sliderLayout->addWidget(brightnessSlider);
+    sliderLayout->addWidget(contrastSlider);
+}
+
+void DkBrightnessWidget::on_brightnessSlider_valueChanged(int val)
+{
+    manipulator()->setBrightness(val);
+}
+
+void DkBrightnessWidget::on_contrastSlider_valueChanged(int val)
+{
+    manipulator()->setContrast(val);
 }
 
 }

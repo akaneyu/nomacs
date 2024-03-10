@@ -355,4 +355,29 @@ private:
     double mOffset = mOffsetDefault;
     double mGamma = mGammaDefault;
 };
+
+class DllCoreExport DkBrightnessManipulator : public DkBaseManipulatorExt
+{
+public:
+    DkBrightnessManipulator(QAction *action);
+
+    QImage apply(const QImage &img) const override;
+    QString errorMessage() const override;
+
+    void applyDefault() override;
+
+    void setBrightness(int brightness);
+    int brightness() const;
+
+    void setContrast(int contrast);
+    int contrast() const;
+
+private:
+    int mBrightnessDefault = 0;
+    int mContrastDefault = 0;
+
+    int mBrightness = mBrightnessDefault;
+    int mContrast = mContrastDefault;
+};
+
 }

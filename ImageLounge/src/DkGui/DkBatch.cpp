@@ -1859,6 +1859,7 @@ void DkBatchManipulatorWidget::addSettingsWidgets(DkManipulatorManager &manager)
     mMplWidgets << new DkExposureWidget(manager.manipulatorExt(DkManipulatorManager::m_exposure), this);
     mMplWidgets << new DkColorWidget(manager.manipulatorExt(DkManipulatorManager::m_color), this);
     mMplWidgets << new DkResizeWidget(manager.manipulatorExt(DkManipulatorManager::m_resize), this);
+    mMplWidgets << new DkBrightnessWidget(manager.manipulatorExt(DkManipulatorManager::m_brightness), this);
 
     for (QWidget *w : mMplWidgets)
         mSettingsLayout->addWidget(w);

@@ -139,6 +139,7 @@ public:
         m_tiny_planet,
         m_blur,
         m_unsharp_mask,
+        m_brightness,
 
         m_ext_end
     };

@@ -243,6 +243,25 @@ private:
     void createLayout();
 };
 
+class DkBrightnessWidget : public DkBaseManipulatorWidget
+{
+    Q_OBJECT
+
+public:
+    DkBrightnessWidget(QSharedPointer<DkBaseManipulatorExt> manipulator, QWidget *parent = 0);
+
+    QSharedPointer<DkBrightnessManipulator> manipulator() const;
+
+    void applyDefault() override;
+
+public slots:
+    void on_brightnessSlider_valueChanged(int val);
+    void on_contrastSlider_valueChanged(int val);
+
+private:
+    void createLayout();
+};
+
 // dock --------------------------------------------------------------------
 class DkManipulatorWidget : public DkFadeWidget
 {

@@ -1332,6 +1332,39 @@ bool DkImage::unsharpMask(QImage &img, float sigma, float weight)
     return true;
 }
 
+QImage DkImage::brightnessContrast(const QImage &src, int brightness, int contrast)
+{
+    // nothing to do?
+    if (brightness == 0 && contrast == 0) {
+        return src;
+    }
+
+    QImage imgR;
+
+#ifdef WITH_OPENCV
+
+    // normalize input values
+    double brightnessN = brightness / 200.0;    // -0.5 to +0.5
+    double contrastN = contrast / 100.0;    // -1.0 to +1.0
+    double contrastN2 = (1.02 * (contrastN + 1.0)) / (1.0 * (1.02 - contrastN));
+
+    cv::Mat imgCv = DkImage::qImage2Mat(src);
+
+    cv::Mat imgCv1d = imgCv.reshape(1, src.width() * src.height());
+
+    // perform brightness/contrast operation
+    for (int i = 0; i < 3; i++) {
+        imgCv1d.col(i) = (imgCv1d.col(i) - 128.0) * contrastN2
+                + 128.0 + brightnessN * 256.0;
+    }
+
+    imgR = DkImage::mat2QImage(imgCv1d.reshape(imgCv.channels(), src.height()));
+
+#endif // WITH_OPENCV
+
+    return imgR;
+}
+
 QImage DkImage::createThumb(const QImage &image, int maxSize)
 {
     if (image.isNull())

@@ -179,6 +179,11 @@ void DkManipulatorManager::createManipulators(QWidget *parent)
     action->setStatusTip(QObject::tr("Change the Exposure and Gamma"));
     mpls[m_exposure] = QSharedPointer<DkExposureManipulator>::create(action);
 
+    // brightness/contrast
+    action = new QAction(DkImage::loadIcon(":/nomacs/img/contrast.svg", size), QObject::tr("&Brightness/Contrast..."), parent);
+    action->setStatusTip(QObject::tr("Change the Brightness and Contrast"));
+    mpls[m_brightness] = QSharedPointer<DkBrightnessManipulator>::create(action);
+
     mManipulators = mpls;
 }
 
