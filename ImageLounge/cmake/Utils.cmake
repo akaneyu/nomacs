@@ -20,7 +20,7 @@ macro(NMC_FINDQT)
 	 endif()
 
 	if (NOT DEFINED QT_VERSION_MAJOR)
-	   find_package(QT NAMES Qt6 Qt5 REQAUIRED COMPONENTS Core)
+	   find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core)
 	endif()
 
 	find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Network LinguistTools PrintSupport Concurrent Gui Svg)
@@ -42,7 +42,12 @@ macro(NMC_INSTALL)
 		set(PACKAGE_DIR ${NOMACS_INSTALL_DIRECTORY}/${PROJECT_NAME}.${NMC_ARCHITECTURE})
 		install(TARGETS ${PROJECT_NAME} ${DLL_CORE_NAME} RUNTIME DESTINATION ${PACKAGE_DIR} CONFIGURATIONS Release)
 		install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/Release/ DESTINATION ${PACKAGE_DIR})
-		
+
+		# dependencies
+		set(CMAKE_INSTALL_MFC_LIBRARIES 0)
+		set(CMAKE_INSTALL_DEBUG_LIBRARIES 0)
+		set(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION ${PACKAGE_DIR})
+		include(${CMAKE_ROOT}/Modules/InstallRequiredSystemLibraries.cmake)
 	endif (MSVC)
 
 endmacro(NMC_INSTALL)
