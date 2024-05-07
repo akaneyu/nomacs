@@ -73,7 +73,7 @@ QPushButton#flatWhite:pressed {
 }
 
 QTabBar::tab {
-	width: 300px;
+	min-width: 300px;
 }
 
 QTabBar::close-button {
