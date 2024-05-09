@@ -178,6 +178,11 @@ QDockWidget {
 	color: #fff;
 }
 
+QDockWidget {
+	titlebar-close-icon: url(:/nomacs/img/closedock-white.svg);
+	titlebar-normal-icon: url(:/nomacs/img/normalizedockup-white.svg);
+}
+
 QLabel#batchContentInfo,
 QLabel#statusBarLabel,
 QPushButton#infoButton,

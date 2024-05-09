@@ -94,6 +94,8 @@
     <file>img/undo.svg</file>
     <file>img/redo.svg</file>
     <file>img/orientation.svg</file>
+    <file>img/closedock-white.svg</file>
+    <file>img/normalizedockup-white.svg</file>
     <file>stylesheet.css</file>
     
   </qresource>
