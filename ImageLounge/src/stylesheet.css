@@ -84,6 +84,11 @@ QTabBar::close-button:hover {
 	image: url(:/nomacs/img/close-hover.svg);
 }
 
+QTabBar QToolButton {
+	border: none;
+	background-color: BACKGROUND_COLOR;
+}
+
 QPushButton#DkPlayerButton {
 	margin: 0px;
 	border: none;
