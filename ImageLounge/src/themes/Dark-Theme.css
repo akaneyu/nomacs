@@ -43,6 +43,10 @@ nmc--DkBatchTabButton:checked {
 	border-left: 4px solid HIGHLIGHT_COLOR;
 }
 
+nmc--DkToolButton {
+	border: none;
+}
+
 QLineEdit {
 	background: rgba(255, 255, 255, 60);
 	color: FOREGROUND_COLOR;
