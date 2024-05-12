@@ -157,8 +157,13 @@ QMenuBar::item:selected,
 QMenu::item:selected,
 QTreeView::item:hover,
 QListView::item:hover,
-QTabBar::tab:selected {
+QTabBar::tab:hover {
     background: #666;
+}
+
+QTabBar::tab:selected {
+	background-color: rgba(0, 0, 0, 80);
+	border-bottom: 4px solid HIGHLIGHT_COLOR;
 }
 
 QMenu::item:checked {
