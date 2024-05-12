@@ -38,7 +38,7 @@ nmc--DkBatchTabButton {
 
 QPushButton#DkTabEntryWidget:checked,
 nmc--DkBatchTabButton:checked {
-	background-color: rgba(80, 80, 80, 80);
+	background-color: rgba(0, 0, 0, 80);
 	border: none;	/* clear border styles first */
 	border-left: 4px solid HIGHLIGHT_COLOR;
 }
@@ -275,6 +275,10 @@ QPushButton#displayButton {
 	background-color: #000;
 	
 	color: #fff;
+}
+
+QToolButton:checked {
+	background-color: rgba(0, 170, 255, 80);
 }
 
 QTabBar::close-button {
