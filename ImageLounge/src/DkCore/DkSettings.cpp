@@ -890,7 +890,7 @@ void DkSettings::setToDefaultSettings()
     display_p.bgColorFrameless = QColor(0, 0, 0, 180);
     display_p.thumbSize = 64;
     display_p.iconSize = 16;
-    display_p.thumbPreviewSize = 64;
+    display_p.thumbPreviewSize = 128;
     display_p.antiAliasing = true;
     display_p.highQualityAntiAliasing = false;
     display_p.showCrop = false;
@@ -901,7 +901,7 @@ void DkSettings::setToDefaultSettings()
     display_p.showBorder = false;
     display_p.showSubFolderThumbs = true;
     display_p.displaySquaredThumbs = true;
-    display_p.showThumbLabel = false;
+    display_p.showThumbLabel = true;
     display_p.showScrollBars = false;
     display_p.animationDuration = 0.5f;
     display_p.alwaysAnimate = false;
