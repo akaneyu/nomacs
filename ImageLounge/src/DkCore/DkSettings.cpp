@@ -921,8 +921,8 @@ void DkSettings::setToDefaultSettings()
     //meta_p.saveExifOrientation = true;
     meta_p.ignoreExifOrientation = false;
 
-    sync_p.checkForUpdates = !isPortable(); // installed version should only check for updates by default
-    sync_p.disableUpdateInteraction = isPortable(); // installed version should only check for updates by default
+    sync_p.checkForUpdates = false;
+    sync_p.disableUpdateInteraction = true;
     sync_p.updateDialogShown = false;
     sync_p.lastUpdateCheck = QDate(2018, 7, 14); // ; )
     sync_p.syncAbsoluteTransform = true;
