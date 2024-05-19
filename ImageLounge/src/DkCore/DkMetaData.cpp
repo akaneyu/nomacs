@@ -469,7 +469,9 @@ QString DkMetaDataT::getNativeExifValue(const QString &key, bool humanReadable) 
 
                 // qDebug() << "pos count: " << pos->count();
                 // Exiv2::Value::AutoPtr v = pos->getValue();
-                if (humanReadable) {
+                if (key == QLatin1String("Exif.Photo.UserComment")) {
+                    info = QString::fromStdString(static_cast<const Exiv2::CommentValue &>(pos->value()).comment());
+                } else if (humanReadable) {
                     std::stringstream ss;
                     ss << *pos;
                     info = exiv2ToQString(ss.str());
@@ -1772,7 +1774,7 @@ QString DkMetaDataHelper::getGpsCoordinates(QSharedPointer<DkMetaDataT> metaData
             // example url
             // http://maps.google.com/maps?q=N48+8'+31.940001''+E16+15'+35.009998''
 
-            gpsInfo = "http://maps.google.com/maps?q=";
+            gpsInfo = "https://maps.google.com/maps?q=";
 
             QString latStr = convertGpsCoordinates(Lat).join("+");
             QString lonStr = convertGpsCoordinates(Lon).join("+");
