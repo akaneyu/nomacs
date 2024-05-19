@@ -6,6 +6,14 @@ nomacs is a free, open source image viewer, which supports multiple platforms. Y
 [![Downloads](https://img.shields.io/github/downloads/nomacs/nomacs/total.svg)](https://github.com/nomacs/nomacs/releases/latest)
 [![Crowdin](https://badges.crowdin.net/nomacs/localized.svg)](http://translate.nomacs.org/project/nomacs)
 
+## Anyu Patched Version
+
+Anyu Patched Version is an experimental version that has some enhancements: better tab switching, thumbnails for subfolders, concurrent loading queue, bug fixes, etc.
+
+![Edit Image](doc/images/edit_image.png)
+
+![Subfolder Thumbnails](doc/images/subfolder_thumbnails.png)
+
 ## Build nomacs (Windows)
 
 We assume you have an IDE (i.e. Visual Studio), python, git, and [Qt](https://www.qt.io/download-open-source) installed.  
